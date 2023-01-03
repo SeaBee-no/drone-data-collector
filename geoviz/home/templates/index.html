@@ -1,0 +1,36 @@
+{% extends "footer.html" %}
+{% load static %}
+
+{% block page_css %}
+<style>
+
+  body {
+    overflow-y: hidden;
+}
+</style>
+
+
+{% endblock %}
+
+
+{% block mainbody %}
+
+<div class="tm-row">
+    <div class="tm-col-left m-0 p-0"></div>
+    <main class="tm-col-right ">
+        <section class="tm-content m-0 p-0">
+            <h2 class="mb-5 tm-content-title " style="font-size:58px;font-weight:900"><strong class="text-info">S</strong>eabee-<strong class="text-info">G</strong>eovisualization</h2>
+
+            <p class="mb-3 pt-5 text-justify alert alert-info " style="border-radius: 15px 150px;height:300px;margin-top:150px;">
+
+                <img style="width:500px"  src="{% static 'home/img/logoAll.png' %}" class=" d-block img-fluid mx-auto text-center pt-4">
+
+            </p>
+<!--            <hr class="mb-5">-->
+<!--            <p class="mb-5">The FARE project will enhance scientific knowledge and management of plastic debris in Norway by producing a toolbox for assessing the quality of macro- and microplastic exposure and effects data.</p>-->
+<!--            <a href="about.html" class="btn btn-primary">Continue...</a>-->
+        </section>
+    </main>
+</div>
+
+{% endblock %}

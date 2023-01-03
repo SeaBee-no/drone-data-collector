@@ -1,0 +1,316 @@
+{% extends "footer.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_css %}
+<!--Refrence from http://techlaboratory.net/jquery-smartwizard-->
+
+<link href="{% static 'home/css/disclaimer.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block mainbody %}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="text-center pb-5">Terms & Conditions and Privacy Policy</h2>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-3" id="myScrollspy">
+
+            <div class="list-group tree-comp">
+                <a class="list-group-item list-group-item-action active" href="#section1">Terms and Conditions</a>
+                <a class="list-group-item list-group-item-action" href="#section2">Privacy</a>
+                <a class="list-group-item list-group-item-action" href="#section3">Disclaimers</a>
+                <a class="list-group-item list-group-item-action" href="#section4">Preservation of immunities</a>
+                <a class="list-group-item list-group-item-action" href="#section5">General</a>
+                <a class="list-group-item list-group-item-action" href="#section6">Privacy Policy</a>
+                <!-- <a class="list-group-item list-group-item-action" href="#section7">Data Protection Officer</a> -->
+            </div>
+        </div>
+
+        <div class="col-sm-9">
+
+            <div class="" id="section1">
+
+                <div class="section-title" data-aos="fade-in">
+
+                    <h4 class="pb-3">Terms & Conditions</h4>
+                    <hr />
+                </div>
+                <p class="text-justify mt-n3"><strong>The use of this web site constitutes agreement with the following
+                        terms and conditions:</strong>
+                <ul class="text-justify">
+                    <li>GRID-Arendal maintains this website (the “Site”) on behalf of FARE (“The Project”) as a courtesy
+                        to
+                        those who may choose to access the Site (“Users”). The information presented herein is for
+                        informative purposes only.
+                    </li>
+                    <li>The Project grants permission to Users to visit the Site and to download and copy the
+                        information,
+                        documents and materials (collectively, “Materials”) from the Site, for non- commercial use,
+                        without
+                        any right to resell or redistribute them or to compile or create derivative works there from,
+                        subject to the terms and conditions outlined below, and also subject to more specific
+                        restrictions
+                        that may apply to specific Materials within this Site.
+                    </li>
+                    <li>Unless explicitly stated otherwise, the findings, interpretations and conclusions expressed in
+                        the
+                        Materials on this Site are those of the various persons involved in the Project who prepared the
+                        work and do not necessarily represent the views of their respective organisations.
+                    </li>
+                    <li>No waiver by the Project of any provision of these Terms and Conditions shall be binding except
+                        as
+                        set forth in writing and signed by its duly authorized representative.
+                    </li>
+                </ul>
+                </p>
+
+            </div>
+
+
+            <div class="" id="section2">
+                <h5>Privacy</h5>
+                <hr />
+                <p class="text-justify">
+                    By accessing this site, certain information about the User, such as Internet protocol (IP)
+                    addresses,
+                    navigation through the Site, the software used and the time spent, along with other similar
+                    information,
+                    will be stored on GRID-Arendal servers. These will not specifically identify the User. The
+                    information
+                    will be used internally only for website traffic analysis. If the User provides unique identifying
+                    information, such as name, address and other information on forms stored on this Site, such
+                    information
+                    will be used only for statistical purposes and will not be published for general access. For more
+                    info,
+                    please see our Privacy Policy below.
+                </p>
+
+            </div>
+
+            <div class="" id="section3">
+                <h5>Disclaimers</h5>
+                <hr />
+                <p class="text-justify">
+                <ul>
+                    <li>The contents of this Site do not necessarily reflect the views or policies of the Project.</li>
+                    <li>The designations employed and the presentations of material in this Site do not imply the
+                        expression
+                        of any opinion whatsoever on the part of the Project concerning the legal status of any country,
+                        territory, city area or its authorities, or concerning the delimitation of its frontiers or
+                        boundaries or the designation of its name, frontiers or boundaries.
+                    </li>
+                    <li>The mention of a commercial entity or product in this website does not imply any endorsement by
+                        the
+                        Project.
+                    </li>
+                    <li>Materials provided on this Site are provided "as is" and the Project specifically does not make
+                        any
+                        warranties or representations as to the accuracy or completeness of any such Materials.
+                    </li>
+                    <li>Under no circumstances shall the Project be liable for any loss, damage, liability or expense
+                        incurred or suffered that is claimed to have resulted from the use of this Site, including,
+                        without
+                        limitation, any fault, error, omission, interruption or delay with respect thereto.
+                    </li>
+                    <li>The use of this Site is at the User's sole risk. Under no circumstances, including, but not
+                        limited
+                        to negligence, shall the Project be liable for any direct, indirect, incidental, special or
+                        consequential damages, even if the Project has been advised of the possibility of such damages.
+                    </li>
+                    <li>As a condition of use of this Site, the User agrees to indemnify the Project from and against
+                        any
+                        and all actions, claims, losses, damages, liabilities and expenses (including reasonable
+                        attorneys'
+                        fees) arising out of the User's use of this Site, including, without limitation, any claims
+                        alleging
+                        facts that if true would constitute a breach by the User of these Terms and Conditions. If the
+                        User
+                        is dissatisfied with any Material on this Site or with any of its Terms and Conditions of Use,
+                        the
+                        User's sole and exclusive remedy is to discontinue using the Site.
+                    </li>
+                    <li>This Site may contain links and references to third-party websites. The linked sites are not
+                        under
+                        the control of The Project is not responsible for the content of any linked site or any link
+                        contained in a linked site. The Project provides these links only as a convenience, and the
+                        inclusion of a link or reference does not imply the endorsement of the linked site by The
+                        Project.
+                    </li>
+
+                    <li>If this Site contains bulletin boards, chat rooms, access to mailing lists or other message or
+                        communication facilities (collectively, “Forums”), the User agrees to use the Forums only to
+                        send
+                        and receive messages and materials that are proper and related to the particular Forum. By way
+                        of
+                        example and not as a limitation, the User agrees that when using a Forum, he or she shall not do
+                        any
+                        of the following:
+                        <ul>
+                            <li>(a) Defame, abuse, harass, stalk, threaten or otherwise violate the legal rights (such
+                                as
+                                rights of privacy and publicity) of others;
+                            </li>
+                            <li>(b) Publish, post, distribute or disseminate any defamatory, infringing, obscene,
+                                indecent
+                                or unlawful material or information;
+                            </li>
+                            <li>(c) Upload or attach files that contain software or other material protected by
+                                intellectual
+                                property laws (or by rights of privacy and publicity) unless the User owns or controls
+                                the
+                                rights thereto or has received all consents therefore as may be required by law;
+                            </li>
+                            <li>(d) Upload or attach files that contain viruses, corrupted files or any other similar
+                                software or programs that may damage the operation of another’s computer;
+                            </li>
+                            <li>(e) Delete any author attributions, legal notices or proprietary designations or labels
+                                in
+                                any file that is uploaded;
+                            </li>
+                            <li>(f) Falsify the origin or source of software or other material contained in a file that
+                                is
+                                uploaded;
+                            </li>
+                            <li>(g) Advertise or offer to sell any goods or services, or conduct or forward surveys,
+                                contests or chain letters, or download any file posted by another user of a Forum that
+                                the
+                                User knows, or reasonably should know, cannot be legally distributed in such manner.
+                            </li>
+                        </ul>
+
+                    </li>
+
+                </ul>
+                The User acknowledges that all Forums and discussion groups are public and not private communications.
+                Further, the User acknowledges that chats, postings, conferences, e-mails and other communications by
+                other
+                Users are not endorsed by The Project, and that such communications shall not be considered to have been
+                reviewed, screened or approved by The Project.
+                <br /> <br />
+                The Project reserves the right to remove, for any reason and without notice, any content of the Forums
+                received from Users, including, without limitation, e-mail and bulletin board postings.
+                </p>
+            </div>
+
+            <div class="" id="section4">
+                <h5>Preservation of immunities</h5>
+                <hr />
+                <p class="text-justify">
+                    Nothing herein shall constitute or be considered to be a limitation upon or a waiver of the
+                    privileges
+                    and immunities of The Project, which are specifically reserved.</p>
+            </div>
+
+            <div class="" id="section5">
+                <h5>General</h5>
+                <hr />
+                <p class="text-justify">
+                    The Project reserves its exclusive right in its sole discretion to alter, limit or discontinue the
+                    Site
+                    or any Materials in any respect. The Project shall have no obligation to take the needs of any User
+                    into
+                    consideration in connection therewith. The Project reserves the right to deny in its sole discretion
+                    any
+                    user access to this Site or any portion thereof without notice.</p>
+            </div>
+
+            <div class="" id="section6">
+                <h5>Privacy Policy</h5>
+                <hr />
+                <p class="text-justify">
+                    This privacy policy sets out how The Project uses and protects any information that you give The
+                    Project
+                    when you use this website.
+                    <br /><br />
+                    The Project is committed to ensuring that your privacy is protected. Should we ask you to provide
+                    certain information by which you can be identified when using this website, then you can be assured
+                    that
+                    it will only be used in accordance with this privacy statement. The Project may change this policy
+                    from
+                    time to time by updating this page. You should check this page from time to time to ensure that you
+                    are
+                    happy with any changes. This policy was last updated on <b>22-10-2021</b>.
+                    <br /><br />
+                    <strong>What information do we collect about you? </strong><br />
+                    We collect information about your name and e-mail address if you register with us, for example to
+                    receive our news stories. Name and email addresses may also be collected when you request access to
+                    maps, graphics, photos and video resources.
+                    <br /><br />
+                    <strong>What we do with the information we gather? </strong><br />
+                    We collect information about you, if you agree, to email you our news stories and information we
+                    think
+                    may be of interest to you. We use your information to respond to your request for information and
+                    permission to use our online resources. We may use the information to improve our products and
+                    services.
+                    We may also use the information to customise the website according to your interests. We will not
+                    share
+                    your information for marketing purposes with other organizations.
+                    <br /><br />
+                    <strong>Links to Other Websites and Services </strong><br />
+                    We are not responsible for the practices employed by websites or services linked to or from the
+                    Service,
+                    including the information or content contained therein. Please remember that when you use a link to
+                    go
+                    from the Service to another website, our Privacy Policy does not apply to third-party websites or
+                    services. Your browsing and interaction on any third-party website or service, including those that
+                    have
+                    a link or advertisement on our website, are subject to that third party’s own rules and policies. In
+                    addition, you agree that we are not responsible and we do not control over any third-parties that
+                    you
+                    authorize to access your User Content. If you are using a third-party website or service (like
+                    Facebook,
+                    Google groups, or a chatroom) and you allow such a third-party access to you User Content you do so
+                    at
+                    your own risk. This Privacy Policy does not apply to information we collect by other means
+                    (including
+                    offline) or from other sources other than through the Service. You should exercise caution and look
+                    at
+                    the privacy statement applicable to the website in question.
+                    <br /><br />
+                    <strong>Security</strong><br />
+                    We are committed to ensuring that your information is secure. In order to prevent unauthorised
+                    access or
+                    disclosure we have put in place suitable physical, electronic and managerial procedures to safeguard
+                    and
+                    secure the information we collect online. As there is no method of transmission over the Internet,
+                    or
+                    method of electronic storage is 100% secure, we cannot guarantee its absolute security.
+                    <br /><br />
+                    <strong>How we use cookies</strong><br />
+                    A cookie is a small file, which asks permission to be placed on your computer’s hard drive. Once you
+                    agree, the file is added and the cookie helps analyse web traffic or lets you know when you visit a
+                    particular site. Cookies allow web applications to respond to you as an individual. The web
+                    application
+                    can tailor its operations to your needs, likes and dislikes by gathering and remembering information
+                    about your preferences.
+                </p>
+
+
+            </div>
+
+            <!--    <div class="" id="section7">
+                   <h5>Data Protection Officer (DPO)</h5>
+                   <p class="text-justify"><a
+                           href="https://www.awi.de/en/about-us/organisation/staff/christoph-wagner.html" target="_blank"
+                           type="button">Christoph Wagner</a> from Alfred-Wegener-Institut, Germany has been appointed as
+                       Data Protection Officer for Arctic PASSION.</p>
+               </div> -->
+
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock %}
+
+{% block page_js %}
+<script src="{% static 'home/js/disclaimer.js' %}"></script>
+{% endblock %}

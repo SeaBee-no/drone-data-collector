@@ -1,0 +1,90 @@
+{% extends "footer.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block page_css %}
+    <link  href="{% static 'home/css/profile.css' %}" rel="stylesheet">
+{% endblock %}
+
+
+{% block mainbody %}
+<div class="tm-row">
+    <div class="tm-col-left"></div>
+    <main class="tm-col-right">
+        <section class="tm-content tm-about">
+            <h2 class="mb-5 tm-content-title">My Profile</h2>
+            <hr class="mb-4">
+
+               {% if messages %}
+                        {% for message in messages %}
+                            <div id="alert_messgae" class="text-center alert alert-{{ message.tags }}  alert-dismissible">
+                                {{ message|safe }}
+                            </div>
+                        {% endfor %}
+
+                        <script type="text/javascript">
+
+                            // Closing the alert
+                            setTimeout (function() {
+                            const fadeout = document.getElementById("alert_messgae");
+                            fadeout.classList.add("fade");
+                            setTimeout(function() { fadeout.classList.add("d-none"); }, 500);
+                            }, 6000);
+
+                        </script>
+
+                    {% endif %}
+
+            <form method="post" enctype="multipart/form-data" class="alert alert-primary">
+                {% csrf_token %}
+
+                <div class="form-row">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.fist_name|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.last_name|as_crispy_field }}
+                    </div>
+                </div>
+                <div class="form-row pt-2">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.organisation|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.organisation_other|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="form-row pt-2">
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.sex|as_crispy_field }}
+                    </div>
+                    <div class="form-group col-md-6 mb-0">
+                        {{ form.pesonal_profile|as_crispy_field }}
+                    </div>
+                </div>
+
+
+                 <div class="form-row">
+                            <div class="form-group col-md-12  pt-4">
+                                {{ form.agreement|as_crispy_field }}
+                            </div>
+                 </div>
+
+                <div class="form-group col-md-12 mb-0 text-center pt-4">
+                    <button type="submit" class="btn btn-info">Confirm</button>
+                </div>
+
+
+            </form>
+        </section>
+    </main>
+</div>
+{% endblock %}
+
+{% block page_js %}
+    <script  src="{% static 'home/js/profile.js' %}" ></script>
+{% endblock %}
+
+
+

@@ -1,0 +1,581 @@
+{% extends "footer.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% load leaflet_tags %}
+{% block page_css %}
+<!--Refrence from http://techlaboratory.net/jquery-smartwizard-->
+
+<link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css"/>
+{% leaflet_css plugins="ALL" %}
+
+
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/wenzhixin/multiple-select/e14b36de/multiple-select.css">-->
+
+<!--<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.1/css/bootstrap-multiselect.min.css"
+      integrity="sha512-jpey1PaBfFBeEAsKxmkM1Yh7fkH09t/XDVjAgYGrq1s2L9qPD/kKdXC/2I6t2Va8xdd9SanwPYHIAnyBRdPmig=="
+      crossorigin="anonymous" referrerpolicy="no-referrer"/>-->
+
+
+<link crossorigin="anonymous"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
+      integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw=="
+      referrerpolicy="no-referrer" rel="stylesheet"/>
+
+<link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet"
+      type="text/css"/>
+<style>
+
+  .pushTheBottom {
+  position: absolute;
+  bottom: 0;
+  left:0;
+
+}
+
+
+
+
+</style>
+
+
+<link href="{% static 'dmc/css/toolEntryForm.css' %}" rel="stylesheet">
+
+{% endblock %}
+
+
+{% block mainbody %}
+
+
+<div class="row">
+    <div class="col-md-9 mx-auto ">
+        <h3 class="text center text-center" data-html2canvas-ignore>Step by Step Guide to Input DMC</h3>
+
+
+        <div class="" id="smartwizard">
+            <ul class="nav ">
+                <li>
+                    <a class="nav-link" href="#step-1">
+                        <h5>Mission Info</h5>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link" href="#step-2">
+                        <h5>Instrument Info</h5>
+                    </a>
+                </li>
+
+
+                <li>
+                    <a class="nav-link" href="#step-3">
+                        <h5>Enviroment Info</h5>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link" href="#step-4">
+                        <h5>Data Upload</h5>
+                    </a>
+                </li>
+
+                <li>
+                    <a class="nav-link" href="#step-5">
+                        <h5>Data Summary</h5>
+                    </a>
+                </li>
+
+            </ul>
+            {% if messages %}
+            {% for message in messages %}
+            <div class="text-center alert alert-{{ message.tags }}  alert-dismissible" id="alert_messgae">
+                {{ message|safe }}
+            </div>
+            {% endfor %}
+
+
+            <script type="text/javascript">
+
+                            // Closing the alert
+                            setTimeout (function() {
+                            const fadeout = document.getElementById("alert_messgae");
+                            fadeout.classList.add("fade");
+                            setTimeout(function() { fadeout.classList.add("d-none"); }, 500);
+                            }, 6000);
+
+
+
+
+
+            </script>
+
+            {% endif %}
+
+            <form class="" enctype="multipart/form-data" id="containerForm" method="POST">
+
+
+                {% csrf_token %}
+                <div class="tab-content alert" id="tab_content_Main">
+
+
+                    {% if form.errors %}
+
+                    {% for field in form %}
+
+                    {% for error in field.errors %}
+                    <div class="alert alert-danger alert-dismissible" role="alert">
+                        <a aria-label="close" class="close" data-dismiss="alert" href="#">&times;</a>
+                        <strong>* {{field.label}} </strong> : {{ error|escape }}
+                    </div>
+
+                    {% endfor %}
+
+                    {% endfor %}
+
+                    {% else %}
+
+
+                    {% endif %}
+
+
+                    <div class="tab-pane alert alert-primary" id="step-1" role="tabpanel">
+                        <div class="form-row">
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.mision_name | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.datetime_range | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.flight_altitude | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.takeoff_landing_coordinates | as_crispy_field }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.image_overlap | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.cloud_cover | as_crispy_field }}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="tab-pane alert alert-primary" id="step-2" role="tabpanel">
+                        <div class="form-row">
+
+                            <div class="form-group col-md-6 mb-0 pb-5">
+
+                                {{ form.dron_info | as_crispy_field | safe }}
+                                <a class="btn btn-link p-0 m-0 pushTheBottom" name="drone" onclick="addDeviceInfo()"
+                                   style="cursor: pointer;" type="button"><i
+                                        class="fa fa-plus-circle fa-2x  m-0 p-0 text-success"></i></a>
+                            </div>
+
+
+                            <div class="form-group col-md-6 mb-0 pb-5">
+                                {{ form.sensor_info | as_crispy_field | safe }}
+                                <a class="btn btn-link p-0 m-0 pushTheBottom" name="sensor" onclick="addDeviceInfo()"
+                                   style="cursor: pointer;" type="button"><i
+                                        class="fa fa-plus-circle fa-2x  m-0 p-0 text-success"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane alert alert-primary" id="step-3" role="tabpanel">
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.wind_speed | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.wind_direction | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.air_temperature | as_crispy_field }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.turbidity | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.Salinity | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.water_temperature | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.cdom | as_crispy_field }}
+                            </div>
+                            <div class="form-group col-md-4 mb-0">
+                                {{ form.secchi_depth | as_crispy_field }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane alert alert-primary " id="step-4" role="tabpanel">
+                        <div class="container d-none progress" id="progress_dataUpload"></div>
+                        <div class="form-row">
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.mosaiced_image | as_crispy_field }}
+                                <hr/>
+                            </div>
+
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.row_image | as_crispy_field }}
+                                <hr/>
+                            </div>
+
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.ground_control_point | as_crispy_field }}
+                                <hr/>
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.ground_truth_point | as_crispy_field }}
+                                <hr/>
+                            </div>
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.dronePath | as_crispy_field }}
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="tab-pane alert alert-primary" id="step-5" role="tabpanel">
+
+                        <table class="table table-striped table-bordered table-hover" id="table_summary_dmc">
+                            <h3 class="pt-4">Summary of the DMC inputs</h3>
+                            <thead>
+                            <tr class="bg-info text-white">
+                                <th scope="col" width="8%"><b>SL No.</b></th>
+                                <th class="w-50" scope="col">Parameter</th>
+                                <th scope="col">Response</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tbody_verify_initial">
+                            {% for field in form %}
+                            <tr>
+                                <td><b>{{ forloop.counter }}</b></td>
+                                <td>{{ field.label | safe }}</td>
+
+                                {% if field.value %}
+
+                                <td><b>{{ field.value }}</b></td>
+
+                                {% else %}
+                                <td><b> -- </b></td>
+                                {% endif %}
+
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                        {% comment %}
+                        {% for field in form %}
+
+                        {% if field.label == 'Drone info' %}
+                        {{ field }} ff
+                        {% endif %}
+                        {% endfor %}
+                        {% endcomment %}
+                    </div>
+
+
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div aria-hidden="true" aria-labelledby="staticBackdropLabelD" class="modal fade" data-backdrop="static"
+     data-keyboard="false"
+     id="dronSensoreInfo" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-info" id="staticBackdropLabelD">Modal title</h4>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true"><i class="fa fa-window-close"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-bordered table-hover" id="table_drone_doi">
+                    <thead>
+                    <tr class="bg-info text-white">
+                        <th scope="col" width="10%"><b>SL No.</b></th>
+                        <th class="" scope="col">Parameter</th>
+                        <th scope="col">Value</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tbody_drone">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Model form to enter new drone info-->
+<div aria-hidden="true" aria-labelledby="staticBackdropLabelDDrone" class="modal fade" data-backdrop="static"
+     data-keyboard="false"
+     id="addNewDrone" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-info" id="staticBackdropLabelDDrone">Add New Drone</h4>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true"><i class="fa fa-window-close"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="addDroneForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-md-6" id="droneMake">
+                            <label for="inputMake">Make</label>
+                            <input class="form-control" id="inputMake" required type="text">
+                            <div class="invalid-feedback">Please fill out this field.</div>
+                        </div>
+                        <div class="form-group col-md-6" id="droneID">
+                            <label for="inputID">ID</label>
+                            <input class="form-control" id="inputID" required type="text">
+                            <div class="invalid-feedback">Please fill out this field.</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6" id="droneModel">
+                            <label for="inputModel">Model</label>
+                            <input class="form-control" id="inputModel" required type="text">
+                            <div class="invalid-feedback">Please fill out this field.</div>
+                        </div>
+                         <div class="form-group col-md-6" id="droneManufacturer">
+                            <label for="inputmanufacturer">Manufacturer</label>
+                            <input class="form-control" id="inputmanufacturer" required type="text">
+                             <div class="invalid-feedback">Please fill out this field.</div>
+
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputType">Type</label>
+                            <select class="form-control" id="inputType">
+                                <option selected value=""></option>
+                                <option value="Fixed wing">Fixed wing</option>
+                                <option value="Roter">Roter</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputYear">Year</label>
+                            <input class="form-control" id="inputYear" max="2099" min="1900" step="1" type="number">
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" name="drone" onclick="CloseDroneSensorModelWindow()" type="button">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--model form for enter new sensor info-->
+<div aria-hidden="true" aria-labelledby="staticBackdropLabelDDrone" class="modal fade" data-backdrop="static"
+     data-keyboard="false"
+     id="addNewSensor" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-info" id="staticBackdropLabelDSensor">Add New Sensor</h4>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true"><i class="fa fa-window-close"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="addSensorForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputMakeS">Make</label>
+                            <input class="form-control" id="inputMakeS" type="text">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="InputResolutionID">Resolution</label>
+                            <input class="form-control" id="InputResolutionID" type="number">
+                        </div>
+                    </div>
+                    <div class="form-row" id="SensorModel">
+                        <div class="form-group col-md-12">
+                            <label for="inputModelS">Model<sup>*</sup> <small>(Name must be unique)</small></label>
+                            <input class="form-control" id="inputModelS" required type="text">
+                            <div class="invalid-feedback">Please fill out this field.</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="inputTypeS">Type</label>
+                            <select class="form-control" id="inputTypeS">
+                                <option selected value=""></option>
+                                <option value="RGB">RGB</option>
+                                <option value="Multispectral">Multispectral</option>
+
+                            </select>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="inputWave">Band Wavelength Intervals</label>
+                            <input class="form-control" id="inputWave" max="2099" min="1900" step="1" type="text">
+                        </div>
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+
+                            <div class="input-group date" data-provide="datepicker">
+                                <label for="inputMakeS">Dates of last calibration</label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fa-solid fa-calendar-days"></i></div>
+                                    </div>
+                                    <input class="form-control datepicker border ml-1" type="text" id="inputCalibration">
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                               <div class="form-group col-md-6">
+
+                            <div class="input-group date" data-provide="datepicker">
+                                <label for="inputMakeS">Dates of last maintenance</label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fa-solid fa-calendar-days"></i></div>
+                                    </div>
+                                    <input class="form-control datepicker border ml-1" type="text" id="inputMaintenance">
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="inputSensorSize">Sensor Size</label>
+                            <input class="form-control" id="inputSensorSize" type="text">
+
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" name="sensor" onclick="CloseDroneSensorModelWindow()" type="button">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--partial update the model sensor info-->
+<div aria-hidden="true" aria-labelledby="staticBackdropLabelSensorUpdate" class="modal fade" data-backdrop="static"
+     data-keyboard="false"
+     id="updateSensorModelForm" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title text-info" id="staticBackdropLabelSensorUpdate">Update Sensor information</h4>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                    <span aria-hidden="true"><i class="fa fa-window-close"></i></span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" id="updateSensorForm" novalidate>
+
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+
+                            <div class="input-group date" data-provide="datepicker">
+                                <label for="inputMakeS">Dates of last calibration</label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fa-solid fa-calendar-days"></i></div>
+                                    </div>
+                                    <input class="form-control datepicker border ml-1" type="text" id="inputCalibrationUpdate">
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                               <div class="form-group col-md-6">
+
+                            <div class="input-group date" data-provide="datepicker">
+                                <label for="inputMakeS">Dates of last maintenance</label>
+
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text"><i class="fa-solid fa-calendar-days"></i></div>
+                                    </div>
+                                    <input class="form-control datepicker border ml-1" type="text" id="inputMaintenanceUpdate">
+                                </div>
+
+
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" name="sensor" onclick="CloseUpdateSensorModelWindow()" type="button">
+                    Update
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block page_js %}
+<script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" type="text/javascript"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
+{% leaflet_js plugins="ALL" %}
+<!--<script src="https://cdn.rawgit.com/wenzhixin/multiple-select/e14b36de/multiple-select.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.1/js/bootstrap-multiselect.min.js"
+        integrity="sha512-fp+kGodOXYBIPyIXInWgdH2vTMiOfbLC9YqwEHslkUxc8JLI7eBL2UQ8/HbB5YehvynU3gA3klc84rAQcTQvXA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
+<script crossorigin="anonymous"
+        integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ=="
+        referrerpolicy="no-referrer"
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/js/jquery.smartWizard.min.js"
+        type="text/javascript"></script>
+<script src="{% static 'dmc/js/toolEntryForm.js' %}"></script>
+
+{% endblock %}

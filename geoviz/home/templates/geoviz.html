@@ -1,0 +1,58 @@
+{% extends "footer.html" %}
+{% load static %}
+
+{% block mainbody %}
+<div class="tm-row">
+    <div class="tm-col-left"></div>
+    <main class="tm-col-right">
+        <section class="tm-content tm-about">
+
+
+            <h2 class="mb-5 tm-content-title">Drone Metadata Collector visualization</h2>
+            <hr class="mb-4">
+   {% comment %}
+            <p class="mb-3 pt-5 text-justify">
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+            </p>
+
+            {% if request.user.groups.all %}
+
+            {% for group_for in request.user.groups.all %}
+
+            {% if group_for.name == 'dronedmc' %}
+
+            <a href="{% url 'dmclist' %}" class="btn btn-info btn-lg" role="button" aria-pressed="true"><i
+                    class='fa fa-calculator'> </i> Toolbox</a>
+
+            {% else %}
+
+            <a href="#" class="btn btn-info btn-lg disabled" role="button" aria-disabled="true"><i
+                    class='fa fa-calculator'> </i> Toolbox</a>
+
+            {% endif %}
+
+            {% endfor %}
+
+            {% else %}
+
+            <a href="#" class="btn btn-info btn-lg disabled" role="button" aria-disabled="true"><i
+                    class='fa fa-calculator'> </i> Toolbox</a>
+
+            {% endif %}
+
+  {% endcomment %}
+
+                       <div class="alert alert-warning mt-5 text-center mx-auto" role="alert">
+                  <h4>Coming Soon and Under Construction!</h4>
+                    </div>
+
+
+
+
+        </section>
+    </main>
+</div>
+{% endblock %}
+
+
+
