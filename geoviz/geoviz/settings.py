@@ -208,7 +208,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #set the CRISPY_form value
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap'
 #CRISPY_TEMPLATE_PACK = 'uni_form'
 
 

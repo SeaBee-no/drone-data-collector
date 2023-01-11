@@ -17,6 +17,14 @@ from rest_framework import serializers, status
 from rest_framework import viewsets
 from rest_framework import permissions
 
+import requests, json, time
+from django.shortcuts import render
+
+from django.conf import settings as conf_settings
+from pathlib import Path
+import os
+
+
 @method_decorator(login_required, name='dispatch')
 class dmcCreate(SuccessMessageMixin, CreateView):
     model = dmc_main
@@ -190,3 +198,100 @@ class sensor_info_list_SnippetList(viewsets.ModelViewSet):
     #
     # def destroy(self, request, pk=None):
     #     return Response({'http_method': 'DEL'})
+
+jsonPath=Path.joinpath(conf_settings.BASE_DIR, 'dmc','dronelogbook')
+
+class get_dronelogbook_flight_data_coustom_form (APIView):
+    def get(self, request, format=None):
+        try:
+            
+            # url = f'https://andoyaspace.dronelogbook.com/webservices/customReportAPI.php'
+          
+            # headers = {"accept": "application/json"}
+            # data = {
+            #     "apikey": os.environ['dronelogbooka_pikey'],
+            #     "template": os.environ['dronelogbook_flight_template'],
+            #     "page": "0",
+            # }
+            # obj= requests.post(url=url, data=data, headers= headers)
+
+            # with open(jsonPath / 'flightList.json','w+') as json_file:
+            #     json.dump(obj.json()['data'], json_file)
+
+            with open(jsonPath / 'flightList.json','r') as f:
+                obj = json.load(f)
+            
+            #return Response(obj.json()['data'])
+            return Response(obj)
+
+        except Exception as e:
+            return Response('NA')
+
+
+
+class get_flight_mission (APIView):
+    def get(self, request, format=None,guid = None):
+        try:
+         
+            obj= get_data_dlb_byguid('flight',guid)
+            
+            with open(jsonPath / 'flight.json','w+') as json_file:
+                json.dump(obj.json()['data'], json_file)
+
+            return Response(obj.json()['data'])
+
+        except Exception as e:
+            return Response('NA')
+
+
+
+
+def get_data_dlb_byguid(opration, guid):
+
+        data = requests.get(f'https://api.dronelogbook.com/{opration}/{guid}', 
+            headers={"accept": "application/json",
+            "ApiKey": os.environ['dronelogbooka_pikey'],
+             "DlbUrl": os.environ['dronelogbook_dlburl'],
+            })
+
+        return data
+
+def get_data_dlb_bypage(opration,page_num):
+
+        data = requests.get(f'https://api.dronelogbook.com/{opration}?num_page={page_num}', 
+            headers={"accept": "application/json",
+            "ApiKey": os.environ['dronelogbooka_pikey'],
+             "DlbUrl": os.environ['dronelogbook_dlburl'],
+            })
+
+        return data
+
+
+"""      flights = []
+            has_more = 1
+            data = []
+            page_num = 0
+            jsonPath=Path.joinpath(conf_settings.BASE_DIR, 'dmc','dronelogbook')
+            while page_num != 4:
+                page_num=page_num +1
+                val  = get_data_dlb(page_num,'flight')
+                flights = flights + val.json()['data']
+                has_more = val.json()['has_more']
+                print(page_num)
+ """
+
+
+       
+    
+def ddc(request):
+    context = {}
+
+    
+    #initial_dict = {
+    #     "created_by" : request.user.username or None,
+      
+    # }
+    # form = ddcForm(request.POST or None, initial = initial_dict)
+    form = ddcForm(request.POST or None)
+    context['form'] = form
+    return render(request, 'ddcEntryForm.html',context)
