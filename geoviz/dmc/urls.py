@@ -18,7 +18,7 @@ path('dmc/<str:type>/<str:qstr>/', get_droneInfo.as_view(), name='droneSensor'),
 path(r'dmcapi/', include(router.urls)),
 path('api-auth/', include('rest_framework.urls')),
 path('api/dronproject/', get_dronelogbook_flight_data_coustom_form.as_view(), name='get_drone_data'),
-path('api/flight/<str:guid>/', get_flight_mission.as_view(), name='get_flight'),
-path('dcc/', ddc, name='dcc'),
+path('api/flight/<str:opration>/<str:guid>/', get_flight_mission.as_view(), name='get_flight'),
+path('ddc/', ddc, name='ddc'),
 
 ]

@@ -56,6 +56,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'captcha',
     'rest_framework',
+     #'rest_framework.authtoken',
     'simple_history',
     'import_export',
     'bootstrap_daterangepicker',
@@ -276,3 +277,10 @@ MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
 # MINIO_MEDIA_FILES_BUCKET = 'my-media-files-bucket'  # replacement for MEDIA_ROOT
 # MINIO_STATIC_FILES_BUCKET = 'my-static-files-bucket'  # replacement for STATIC_ROOT
 MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
+
+# REST_FRAMEWORK config
+# REST_FRAMEWORK = {
+#     'DEFAULT_AUTHENTICATION_CLASSES': [
+#         'rest_framework.authentication.TokenAuthentication',  # <-- And here
+#     ],
+# }

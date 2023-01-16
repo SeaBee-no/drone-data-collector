@@ -24,6 +24,7 @@ from django.conf import settings as conf_settings
 from pathlib import Path
 import os
 
+#from rest_framework.permissions import IsAuthenticated 
 
 @method_decorator(login_required, name='dispatch')
 class dmcCreate(SuccessMessageMixin, CreateView):
@@ -230,18 +231,22 @@ class get_dronelogbook_flight_data_coustom_form (APIView):
 
 
 class get_flight_mission (APIView):
-    def get(self, request, format=None,guid = None):
+    
+    #permission_classes = (IsAuthenticated,) 
+    
+    def get(self, request, format=None,opration=None,guid = None):
         try:
          
-            obj= get_data_dlb_byguid('flight',guid)
+            obj= get_data_dlb_byguid(opration,guid)
             
-            with open(jsonPath / 'flight.json','w+') as json_file:
-                json.dump(obj.json()['data'], json_file)
+            # with open(jsonPath / 'flight.json','w+') as json_file:
+            #     json.dump(obj.json()['data'], json_file)
 
             return Response(obj.json()['data'])
 
         except Exception as e:
             return Response('NA')
+
 
 
 

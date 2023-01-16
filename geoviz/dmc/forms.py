@@ -1,9 +1,12 @@
 from django.forms import ModelForm 
-from django import forms
+#from django import forms
+from django.contrib.gis import forms
 
 from bootstrap_daterangepicker import widgets, fields
 from .models import *
 from leaflet.forms.widgets import LeafletWidget
+from leaflet.forms.fields import GeometryCollectionField as MPF
+
 from django.forms.widgets import CheckboxSelectMultiple
 
 import requests, json
@@ -46,21 +49,37 @@ class ddcForm(forms.Form):
 
     drone_type= forms.ChoiceField(
         widget=forms.RadioSelect(), 
-        choices=(('1', 'Drone'), ('2', 'Otter')),label="Drone project type",
+        choices=(('1', 'Drone'), ('2', 'Otter')),label="Drone Project Type",
         
         )
     
-    mision_name = forms.MultipleChoiceField( 
-        widget=forms.SelectMultiple(attrs={'size':20}),
+    mision_name_list = forms.MultipleChoiceField( 
+        widget=forms.SelectMultiple(attrs={
+            'size':20,
+            'style':'width:70%; height:300px'
+            }),
         
         label="Select name of flight mission",
         choices=()
         )
-    datetime_range = forms.CharField( label='datetime range') 
+    mision_name  = forms.CharField(
+        label='Flight mission name',disabled=True, 
+        widget=forms.TextInput(attrs={'style':'width:60%'}))
 
-    takeoff_landing_coordinates=MultiPointField(srid=4326,help_text='Placename and GPS coordinates/Marks on map', null=True, blank=True,
-                             verbose_name="Take-off and landing co-ordinates")
-    flight_altitude = forms.IntegerField( label='Flight Altitude (meter)')
+    flight_datetime = forms.CharField( label='Flight Date Time', disabled=True) 
+
+    # takeoff_landing_coordinates=MultiPointField(
+    #     srid=4326,help_text='Placename and GPS coordinates/Marks on map', 
+    #     null=True, blank=True,
+    #     verbose_name="Take-off and landing co-ordinates", 
+    #     )
+
+    takeoff_landing_coordinates=MPF(
+        srid=4326,help_text='Placename and GPS coordinates/Marks on map', 
+  
+        )
+
+    flight_altitude = forms.CharField( label='Flight AGL Altitude (meter)',disabled=True)
                                           
     image_overlap = forms.IntegerField(  label='Image Overlap')
 
@@ -113,13 +132,15 @@ class ddcForm(forms.Form):
     
             obj = requests.get(f'http://localhost:8000/api/dronproject/').json()
             
-            self.fields['mision_name'].choices = [(val['Identifier'], val['Flight Name']) for val in obj]
+            self.fields['mision_name_list'].choices = [(val['Identifier'], val['Flight Name']+ "----" + val['Location'] ) for val in obj]
             
             
             
             self.helper = FormHelper()
             self.helper.layout = Layout(
             InlineRadios('drone_type'),
+        
             )
             #self.helper.add_input(Submit('submit', 'Submit'))
+
 

@@ -108,7 +108,7 @@
                                 {{ form.drone_type | as_crispy_field }}
                             </div>
                             <div class="form-group col-md-12 mb-0">
-                                {{ form.mision_name | as_crispy_field }}
+                                {{ form.mision_name_list | as_crispy_field }}
                             </div>
                      
                         </div>
@@ -118,9 +118,25 @@
 
 
                     <div class="tab-pane alert alert-primary" id="step-2" role="tabpanel">
+                        <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ form.mision_name | as_crispy_field   }}
+                        </div>
+                    </div>
+                        <div class="form-row">
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.flight_datetime | as_crispy_field   }}
+                        </div>
                         
-                        {{ form|crispy }}
-                    
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.flight_altitude | as_crispy_field   }}
+                        </div>
+                        </div>
+                        <div class="form-row">
+                        <div class="form-group col-md-12 mb-0">
+                            {{ form.takeoff_landing_coordinates | as_crispy_field   }}
+                        </div>
+                    </div>
                     </div>
                     
                     <div class="tab-pane alert alert-primary" id="step-3" role="tabpanel">
