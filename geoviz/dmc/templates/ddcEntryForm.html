@@ -39,7 +39,7 @@
 </style>
 
 
-<link href="{% static 'dmc/css/toolEntryForm.css' %}" rel="stylesheet">
+<link href="{% static 'dmc/css/ddctoolEntryForm.css' %}" rel="stylesheet">
 
 {% endblock %}
 
@@ -75,7 +75,7 @@
 
                 <li>
                     <a class="nav-link" href="#step-4">
-                        <h5>Enviroment Info</h5>
+                        <h5>Enviromental</h5>
                     </a>
                 </li>
 
@@ -102,25 +102,43 @@
 
 
                     <div class="tab-pane alert alert-primary" id="step-1" role="tabpanel">
-              
+                       
                         <div class="form-row">
-                            <div class="form-group col-md-12 mb-0">
-                                {{ form.drone_type | as_crispy_field }}
-                            </div>
+                    <div class="form-group col-md-6 mb-0">
+             
                             <div class="form-group col-md-12 mb-0">
                                 {{ form.mision_name_list | as_crispy_field }}
                             </div>
-                     
+
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.drone_type | as_crispy_field }}
+                            </div>
+
+                            <div class="form-group col-md-12 mb-0">
+                                {{ form.project_location_name | as_crispy_field }}
+                            </div>
+                 
+
                         </div>
-                    
-                    
+                   
+                        <div class="form-group col-md-6 mb-0">
+                            {{ form.project_location_coordinates | as_crispy_field }}
+                        </div>
+                        </div>
+                     
                     </div>
 
 
                     <div class="tab-pane alert alert-primary" id="step-2" role="tabpanel">
                         <div class="form-row">
-                        <div class="form-group col-md-12 mb-0">
+                        <div class="form-group col-md-6 mb-0">
                             {{ form.mision_name | as_crispy_field   }}
+                        </div>
+                        <div class="form-group col-md-3 mb-0">
+                            {{ form.flight_duration | as_crispy_field   }}
+                        </div>
+                        <div class="form-group col-md-3 mb-0">
+                            {{ form.image_overlap | as_crispy_field   }}
                         </div>
                     </div>
                         <div class="form-row">
@@ -134,19 +152,93 @@
                         </div>
                         <div class="form-row">
                         <div class="form-group col-md-12 mb-0">
-                            {{ form.takeoff_landing_coordinates | as_crispy_field   }}
+                            {{ form.project_area_coordinates | as_crispy_field   }}
                         </div>
                     </div>
                     </div>
                     
                     <div class="tab-pane alert alert-primary" id="step-3" role="tabpanel">
-                        <h1>3</h1>
+                        <div class="form-row">
+                           
+                            <div class="form-group col-md-6 mb-0">
+                                <h5>Drone Info</h5>
+                            <ul class="list-group list-group-flush" id="droneInfoList">
+                                <!-- <li class="list-group-item" style="background: transparent;"> <h5>Hi ll</h5></li> -->
+                              </ul>
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                               
+                               
+                                <h5>Sensor Info</h5>
+                                <ul class="list-group list-group-flush" id="sensorInfoList">
+                                    <!-- <li class="list-group-item" style="background: transparent;"> <h5>Hi ll</h5></li> -->
+                                  </ul>
+                                                     
+                                </div>
+                        </div>
+                        <hr class="p-0 m-0" />
+                        <h5 class="pt-2">Sensor Date</h5>
+                        <div class="form-row">
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.sensor_info_dates_last_calibration | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.sensor_info_dates_last_maintenance | as_crispy_field   }}
+                            </div>
+
+                        </div>
 
                     </div>
                     
                     <div class="tab-pane alert alert-primary " id="step-4" role="tabpanel">
-                    
-                        <h1>4</h1>
+                        <h5>Weather Info</h5>
+                        <div class="form-row pt-3">
+                           
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.cloud_cover | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.humidity | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.air_temperature | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.wind_speed | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.wind_direction | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.sun_time | as_crispy_field   }}
+                            </div>
+
+                        </div>
+                        <h5 class="pt-3">Enviromental Info</h5>
+                        <div class="form-row pt-3">
+                           
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.secchi_depth | as_crispy_field   }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.turbidity | as_crispy_field   }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.salinity | as_crispy_field   }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.water_temperature | as_crispy_field   }}
+                            </div>
+                            <div class="form-group col-md-6 mb-0">
+                                {{ form.cdom | as_crispy_field   }}
+                            </div>
+                        </div>
 
                     </div>
 

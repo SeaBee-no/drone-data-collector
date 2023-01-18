@@ -209,7 +209,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 #set the CRISPY_form value
-CRISPY_TEMPLATE_PACK = 'bootstrap'
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
 #CRISPY_TEMPLATE_PACK = 'uni_form'
 
 
@@ -227,10 +227,8 @@ LEAFLET_CONFIG = {
     'MIN_ZOOM': 3,
     'MAX_ZOOM': 30,
 'MINIMAP': True,
-'TILES': [('Streets', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': '&copy; OSM', 'maxZoom': 30}),
-          ('Satellite', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {'attribution': '&copy; google','maxZoom': 30})],
-
-
+'TILES': [('Satellite', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {'attribution': '&copy; google','maxZoom': 30}),
+('Streets', 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {'attribution': '&copy; OSM', 'maxZoom': 30})],
 'PLUGINS': {
     'addLocation': {
         'css': ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css', 'https://cdn.jsdelivr.net/npm/leaflet.locatecontrol@0.70.0/dist/L.Control.Locate.min.css',],

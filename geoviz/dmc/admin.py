@@ -23,3 +23,11 @@ class dmc_sensorInfo_Admin(ImportExportModelAdmin,SimpleHistoryAdmin):
     list_display = ('model',)
     search_fields = ('model',)
 admin.site.register(sensor_info_list,dmc_sensorInfo_Admin )
+
+
+# Register your models here.
+class ddc_main_Admin(ImportExportModelAdmin,SimpleHistoryAdmin):
+    #form = user_profilesForm
+    list_display = ('flight_mission_name','flight_mission_guid')
+    search_fields = ('flight_mission_name','flight_mission_guid')
+admin.site.register(ddc_main,ddc_main_Admin )

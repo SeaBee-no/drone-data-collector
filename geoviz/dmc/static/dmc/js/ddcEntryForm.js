@@ -22,13 +22,27 @@ const droneIcone = L.icon({
 });
 
 // initialize the map
-var map = null;
-let gp_layer = null;
+let map_projArea = null;
+let map_proLoca = null;
+let gp_layer_projArea = null;
+let gp_layer_proLoca = null;
+
 $(window).on("map:init", function (e) {
   //get the map refrence
   var detail = e.originalEvent ? e.originalEvent.detail : e.detail;
-  map = detail.map;
-  gp_layer = L.featureGroup().addTo(map);
+  
+  if(detail.id == "id_project_area_coordinates-map"){
+
+    map_projArea = detail.map;
+    gp_layer_projArea = L.featureGroup().addTo(map_projArea);
+ }
+
+ if(detail.id == "id_project_location_coordinates-map"){
+
+  map_proLoca = detail.map;
+  gp_layer_proLoca = L.featureGroup().addTo(map_proLoca);
+}
+
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -102,7 +116,10 @@ document.addEventListener("DOMContentLoaded", function () {
   // force to mutiselect to single
   $("#id_mision_name_list").on("click", "option", function (event) {
     // clear the previous layers from group layer
-    gp_layer.clearLayers();
+    gp_layer_projArea.clearLayers();
+    gp_layer_proLoca.clearLayers();
+
+
 
     if (1 <= $(this).siblings(":selected").length) {
       //$(this).removeAttr("selected");
@@ -115,15 +132,63 @@ document.addEventListener("DOMContentLoaded", function () {
       function (returndata_flight) {
         // Flight level data
         let flight = returndata_flight;
-        //console.log(flight);
+       console.log(flight);
 
-        // form Mission Info #####
+       
+       //select project info
+       $("#id_project_location_name").val(flight.place_name);
+       
+       // form Mission Info #####
         $("#id_mision_name").val(flight.name);
         $("#id_flight_datetime").val(flight.flight_date);
         $("#id_flight_altitude").val(flight.max_altitude_agl);
+        $("#id_flight_duration").val(flight.duration_seconds);
+        
+          //Enviromental  Info #####
+          $("#id_cloud_cover").val(flight.weather_detail.CC);
+          $("#id_humidity").val(flight.weather_detail.H);
+          $("#id_air_temperature").val(flight.weather_detail.T);
+          $("#id_wind_speed").val(flight.weather_detail.W.split("(")[0]);
+          $("#id_wind_direction").val(flight.weather_detail.W.split("(")[1].slice(0, -1));
+          $("#id_sun_time").val(flight.sun_time);
+
+
+        
+        
+
+
         flight.data_plan_area.forEach((element) => {
-          let el = L.polyline(L.GeoJSON.coordsToLatLngs(element.geometry));
-          gp_layer.addLayer(el);
+          
+          let validJson = true;
+          element.geometry.forEach(function (c) {
+            if (
+              isNaN(c[0]) ||
+              isNaN(c[1]) ||
+              c[0] < -90 ||
+              c[0] > 90 ||
+              c[1] < -180 ||
+              c[1] > 180
+            ) {
+              validJson = false;
+            }
+          });
+          let el= null;
+          if(validJson){
+
+            el = L.polyline(L.GeoJSON.coordsToLatLngs(element.geometry),{color: '#0080FF', weight: 4, opacity: 0.8});
+            gp_layer_projArea.addLayer(el);
+          }
+
+          if(!validJson){
+            el = element.geometry.map(coords => coords.map(coord => coord.reverse()));
+            el = L.polyline(el,{color: '#FFFF00', weight: 2, opacity: 0.5});
+            console.log(el)
+            gp_layer_projArea.addLayer(el);
+            
+            }
+
+
+
         });
         //###########################
         let tasks_equipment = [];
@@ -141,15 +206,14 @@ document.addEventListener("DOMContentLoaded", function () {
           );
         });
 
-        
-        
         let tasks_drone = [];
         Promise.all(tasks_equipment).then((equipmentList) => {
-        
+        console.log(equipmentList);
+
+        $("#sensorInfoList").empty();
+
           equipmentList.forEach((el) => {
             if (el.drone_guid && el.drone_guid.length > 0) {
-             
-             
               tasks_drone.push(
                 new Promise((resolve, reject) => {
                   get_flightdataByGUID(
@@ -157,44 +221,58 @@ document.addEventListener("DOMContentLoaded", function () {
                     el.drone_guid,
                     function (returndata_drone) {
                       resolve(returndata_drone);
-                      
                     }
                   );
                 })
               );
-           
-           
             }
+if (el.is_battery == "0"){
+
+$("#sensorInfoList").append(
+  `<li class="list-group-item"> <b>Equipment:</b> ${el.equipment_type}   <b>Detail:</b> ${el.name}</li>`
+);
+}
+
+
+
           });
 
           Promise.all(tasks_drone).then((droneList) => {
-            //??????????????????????????????????????????????????
-            console.log(droneList);
+            $("#droneInfoList").empty();
+
+            // get the unique drone by sirial number
+            droneList = [
+              ...droneList.filter(
+                (a, i) =>
+                  droneList.findIndex(
+                    (s) => a.serial_numner === s.serial_numner
+                  ) === i
+              ),
+            ];
+
+            droneList.forEach((el) => {
+              $("#droneInfoList").append(
+                `<li class="list-group-item"><b>Drone name:</b> ${el.name}</li>`
+              );
+              $("#droneInfoList").append(
+                `<li class="list-group-item"> <b>Brand:</b> ${el.brand} </h5></li>`
+              );
+              $("#droneInfoList").append(
+                `<li class="list-group-item"> <b>Drone type:</b> ${el.drone_type} </h5></li>`
+              );
+              $("#droneInfoList").append(
+                `<li class="list-group-item"> <b>Model:</b> ${el.model} </h5></li>`
+              );
+              $("#droneInfoList").append(
+                `<li class="list-group-item"> <b>Serial number:</b> ${el.serial_number} </h5></li>`
+              );
+
+              $("#droneInfoList").append(
+                `<li class="list-group-item" style="background: transparent;"></li>`
+              );
             });
-
+          });
         });
-
-    
-
-
-
-        //   flight.equipments.forEach((el) => {
-
-        //     get_flightdataByGUID(
-        //       "equipment", el,
-        //       function (returndata_equipment) {
-
-        //         console.log(returndata_equipment.guid);
-
-        //       });
-        // });
-
-        // get_flightdataByGUID(
-        //   "drone", returndata_equipment.drone_guid,
-        //   function (returndata_drone) {
-        //     console.log(returndata_drone);
-
-        //   });
 
         //********************** /
         get_flightdataByGUID(
@@ -204,17 +282,28 @@ document.addEventListener("DOMContentLoaded", function () {
             // Flight level data
             let place = returndata_place;
 
-            gp_layer.addLayer(
+            gp_layer_proLoca.addLayer(
               new L.marker([place.latitude, place.longitude], {
                 icon: droneIcone,
               })
             );
             // L.circleMarker([50.5, 30.5]  ).addTo(map);
 
-            map.fitBounds(gp_layer.getBounds());
-            sleep(1000).then(() => {
-              map.zoomOut(10);
-            });
+          
+             sleep(2000).then(() => {
+            
+
+            map_proLoca.fitBounds(gp_layer_proLoca.getBounds());
+            map_proLoca.zoomOut(18);
+
+            sleep(5000).then(() => {
+
+            map_projArea.fitBounds(gp_layer_projArea.getBounds());
+            //map_projArea.zoomIn(1);
+          });
+
+
+             });
             //new L.marker([50.5, 30.5])
             //********************** /
           }
@@ -245,7 +334,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function (e, anchorObject, currentStepIndex, stepDirection) {
       if (currentStepIndex == 1) {
         // validate the map
-        map.invalidateSize();
+        map_projArea.invalidateSize();
       }
     }
   );

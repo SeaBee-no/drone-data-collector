@@ -17,3 +17,41 @@
         }
     ]
 }
+
+
+
+
+
+// {
+//     // Use IntelliSense to learn about possible attributes.
+//     // Hover to view descriptions of existing attributes.
+//     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+//     "version": "0.2.0",
+//     "configurations": [
+//         {
+//             "name": "Django",
+//             "type": "python",
+//             "request": "launch",
+//             "program": "${workspaceFolder}\\geoviz\\manage.py",
+//             "args": [
+//                 "runserver"
+//             ],
+//             "django": true,
+//             "justMyCode": true
+//         },
+//         {
+//             "name": "Chrome",
+//             "type": "chrome",
+//             "request": "launch",
+//             "url": "http://localhost:8000",
+//             "webRoot": "${workspaceFolder}\\dsm\\dashboard\\static\\dashboard\\js",
+//             "runtimeExecutable": "C:\\Users\\DEB\\AppData\\Local\\Google\\Chrome\\Application\\chrome.exe",
+              
+//         }
+//     ],
+//     "compounds": [{
+//         "name": "Web-Django",
+//         "configurations": ["Django", "Chrome"]
+//         }
+//      ]
+// }

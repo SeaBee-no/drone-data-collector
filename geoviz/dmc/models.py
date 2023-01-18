@@ -134,3 +134,37 @@ class dmc_main(models.Model):
     class Meta:
         verbose_name_plural = "Mission profile"
 
+
+
+class ddc_main(models.Model):
+    created_by = models.ForeignKey(user_profile, null=True, blank=True, on_delete=models.CASCADE,
+                                   related_name='ddc_for_metadata')
+    flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id')
+    
+    flight_mission_name  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Flight Mission Name')
+    
+    drone_type  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Drone Type')
+    
+    image_overlap  = models.PositiveIntegerField(null=True, blank=True, verbose_name='Image Overlap')
+
+    cdom =models.PositiveIntegerField(null=True, blank=True,
+                                                     verbose_name='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)')
+    turbidity =models.PositiveIntegerField(null=True, blank=True,
+                                                     verbose_name='Turbidity- FNU (0-100)')
+    Salinity =models.PositiveIntegerField(null=True, blank=True,
+                                                     verbose_name='Salinity- PSU (0-40)')
+    water_temperature =models.PositiveIntegerField(null=True, blank=True,
+                                                verbose_name='Water Temperature (1.7C – 35C)')
+    secchi_depth=models.PositiveIntegerField(null=True, blank=True,
+                                                verbose_name='Secchi Depth (metres)')
+    sensor_dates_last_calibration=models.DateField( verbose_name='Dates of last calibration', blank=True,null=True)
+    sensor_dates_last_maintenance  = models.DateField( verbose_name='Dates of last maintenance',
+                                              blank=True, null=True)
+    history = HistoricalRecords()
+    
+    def __str__(self):
+        return str(self.flight_mission_name) or 'NA'
+
+
+    class Meta:
+        verbose_name_plural = "Dronelogbook additional parameter"

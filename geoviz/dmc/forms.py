@@ -1,5 +1,5 @@
-from django.forms import ModelForm 
-#from django import forms
+from django.forms import ModelForm
+# from django import forms
 from django.contrib.gis import forms
 
 from bootstrap_daterangepicker import widgets, fields
@@ -9,17 +9,19 @@ from leaflet.forms.fields import GeometryCollectionField as MPF
 
 from django.forms.widgets import CheckboxSelectMultiple
 
-import requests, json
+import requests
+import json
 from crispy_forms.layout import Layout, Div, Field, Submit
 from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
 
+
 class dmcForm(ModelForm):
-    datetime_range =fields.DateTimeRangeField(
+    datetime_range = fields.DateTimeRangeField(
         input_formats=['%d/%m/%Y (%H:%M)'],
         widget=widgets.DateTimeRangeWidget(format='%d/%m/%Y (%H:%M)',
                                            picker_options={
-                                               'timePicker24Hour':True,
+                                               'timePicker24Hour': True,
 
                                            }),
 
@@ -43,80 +45,96 @@ class dmcForm(ModelForm):
         self.fields["sensor_info"].queryset = sensor_info_list.objects.all()
 
 
-
 class ddcForm(forms.Form):
     created_by = forms.CharField(label="User")
-
-    drone_type= forms.ChoiceField(
-        widget=forms.RadioSelect(), 
-        choices=(('1', 'Drone'), ('2', 'Otter')),label="Drone Project Type",
-        
-        )
     
-    mision_name_list = forms.MultipleChoiceField( 
+    ## capture to db
+    drone_type = forms.ChoiceField(
+        widget=forms.RadioSelect(),
+        choices=(('1', 'Drone'), ('2', 'Otter'), ('2', 'Other')), label="Drone Type", required=False
+    )
+
+    mision_name_list = forms.MultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
-            'size':20,
-            'style':'width:70%; height:300px'
-            }),
-        
-        label="Select name of flight mission",
-        choices=()
-        )
-    mision_name  = forms.CharField(
-        label='Flight mission name',disabled=True, 
-        widget=forms.TextInput(attrs={'style':'width:60%'}))
+            'size': 20,
+            'style': 'width:100%;height:390px;'
+        }),
 
-    flight_datetime = forms.CharField( label='Flight Date Time', disabled=True) 
+        label="Select Name of Flight Mission",
+        choices=(), required=False
+    )
+    mision_name = forms.CharField(
+        label='Flight Mission Name', disabled=True, required=False
+        # widget=forms.TextInput(attrs={'style':'width:60%'})
+    )
 
-    # takeoff_landing_coordinates=MultiPointField(
-    #     srid=4326,help_text='Placename and GPS coordinates/Marks on map', 
-    #     null=True, blank=True,
-    #     verbose_name="Take-off and landing co-ordinates", 
-    #     )
+    flight_datetime = forms.CharField(
+        label='Flight Date Time', disabled=True, required=False)
 
-    takeoff_landing_coordinates=MPF(
-        srid=4326,help_text='Placename and GPS coordinates/Marks on map', 
-  
-        )
+    project_area_coordinates = MPF(
+        srid=4326, geom_type='GEOMETRYCOLLECTION', required=False)
 
-    flight_altitude = forms.CharField( label='Flight AGL Altitude (meter)',disabled=True)
-                                          
-    image_overlap = forms.IntegerField(  label='Image Overlap')
+    project_location_coordinates = MPF(
+        srid=4326, geom_type='GEOMETRYCOLLECTION', required=False)
 
-    cloud_cover = forms.IntegerField(label='Cloud cover estimated at the Start of the flight in percentage')
-    wind_speed =forms.IntegerField(  label='Wind Speed (meter/second)')
-    wind_direction  = forms.CharField(label='Wind Direction ')
-    air_temperature =forms.IntegerField(label='Air Temperatur (<sup> o</sup>C)')
-    cdom =forms.IntegerField(label='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)')
-    turbidity =forms.IntegerField(label='Turbidity- FNU (0-100)')
-    Salinity =forms.IntegerField(label='Salinity- PSU (0-40)')
-    water_temperature =forms.IntegerField(label='Water Temperature (1.7<sup> o</sup>C – 35<sup> o</sup>C)')
-    secchi_depth=forms.IntegerField(label='Secchi Depth (metres)')
+    project_location_name = forms.CharField(
+        label='Project Location', disabled=True, required=False)
 
-        
-    dron_info_manufacturer = forms.CharField(label="Manufacturer")
-    dron_info_drone_srnr= forms.CharField( label="Serial number")
-    dron_info_make= forms.CharField( label="Make")
-    dron_info_model= forms.CharField( label="Model")
-    dron_info_type= forms.CharField( label='Type')
-    dron_info_year =forms.IntegerField(label='Year')
+    flight_duration = forms.CharField(
+        label='Flight Duration in Minute', disabled=True, required=False)
     
+    ## capture to db
+    image_overlap = forms.IntegerField(label='Image Overlap', required=False)
+
+    flight_altitude = forms.CharField(
+        label='Flight AGL Altitude (meter)', disabled=True)
+
+    cloud_cover = forms.CharField(
+        label='Cloud Cover', required=False, disabled=True)
+
+    humidity = forms.CharField(label='Humidity', disabled=True, required=False)
+
+    air_temperature = forms.CharField(
+        label='Air Temperatur', disabled=True, required=False)
+
+    wind_speed = forms.CharField(
+        label='Wind Speed', disabled=True, required=False)
+
+    wind_direction = forms.CharField(
+        label='Wind Direction', disabled=True, required=False)
+
+    sun_time = forms.CharField(
+        label='Day/Night', disabled=True, required=False)
+
     
+    ## capture to db
+    cdom = forms.IntegerField(
+        label='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)')
+   
+     ## capture to db
+    turbidity = forms.IntegerField(label='Turbidity- FNU (0-100)')
      
-    sensor_info_make = forms.CharField( label="Make")
-    sensor_info_model = forms.CharField( label="Model")
-    sensor_info_type = forms.CharField( label='Type')
-    sensor_info_sensor_size =forms.CharField( label='Sensor size')
-    sensor_info_resolution = forms.CharField( label='Resolution')
-    sensor_info_band_wavelength_intervals = forms.CharField( label='Band wavelength intervals')
-    sensor_info_dates_last_calibration=forms.DateField( label='Dates of last calibration')
-    sensor_info_dates_last_maintenance  = forms.DateField( label='Dates of last maintenance',
-                                              )
+     ## capture to db
+    salinity = forms.IntegerField(label='Salinity- PSU (0-40)')
     
+     ## capture to db
+    water_temperature = forms.IntegerField(
+        label='Water Temperature (1.7<sup> o</sup>C – 35<sup> o</sup>C)')
     
+     ## capture to db
+    secchi_depth = forms.IntegerField(label='Secchi Depth (metres)')
+    
+    ## capture to db
+    sensor_info_dates_last_calibration = forms.DateField(
+        label='Dates of last calibration')
+     
+     ## capture to db
+    sensor_info_dates_last_maintenance = forms.DateField(
+        label='Dates of last maintenance',)
+
     # All uploaded
     # #mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
-    
+
     # mosaiced_image = models.FileField(null=True, blank=True,
     #                                   storage=MinioBackend(bucket_name='dmc'),
     #                                   verbose_name='Upload single mosaiced file',
@@ -128,19 +146,16 @@ class ddcForm(forms.Form):
     #                                       upload_to='dmcData/donePath')
 
     def __init__(self, *args, **kwargs):
-            super(ddcForm, self).__init__(*args, **kwargs)
-    
-            obj = requests.get(f'http://localhost:8000/api/dronproject/').json()
-            
-            self.fields['mision_name_list'].choices = [(val['Identifier'], val['Flight Name']+ "----" + val['Location'] ) for val in obj]
-            
-            
-            
-            self.helper = FormHelper()
-            self.helper.layout = Layout(
-            InlineRadios('drone_type'),
-        
-            )
-            #self.helper.add_input(Submit('submit', 'Submit'))
+        super(ddcForm, self).__init__(*args, **kwargs)
 
+        obj = requests.get(f'http://localhost:8000/api/dronproject/').json()
 
+        self.fields['mision_name_list'].choices = [
+            (val['Identifier'], val['Flight Name'] + "----" + val['Location']) for val in obj]
+
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            # InlineRadios('drone_type'),
+            Field('drone_type', css_class="form-check-inline"),
+        )
+        # self.helper.add_input(Submit('submit', 'Submit'))
