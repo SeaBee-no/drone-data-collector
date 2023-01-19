@@ -23,6 +23,11 @@ from django.shortcuts import render
 from django.conf import settings as conf_settings
 from pathlib import Path
 import os
+from rest_framework import generics
+
+from rest_framework.permissions import IsAuthenticated
+
+
 
 #from rest_framework.permissions import IsAuthenticated 
 
@@ -300,3 +305,27 @@ def ddc(request):
     form = ddcForm(request.POST or None)
     context['form'] = form
     return render(request, 'ddcEntryForm.html',context)
+
+
+
+
+
+
+## to store addinonal parametr to database
+class dronelogBook_serializers(serializers.ModelSerializer):
+    class Meta:
+        model = ddc_main
+        fields = '__all__'
+        #exclude = ('created_by',)
+
+
+class dronelogBook_add(generics.CreateAPIView):
+
+  #  permission_classes = (IsAuthenticated,)
+    queryset = ddc_main.objects.all()
+    serializer_class = dronelogBook_serializers
+
+    def perform_create(self, serializer):
+        data = serializer.validated_data
+        serializer.save()
+        return Response({"success": "Data has been successfully created."}, status=status.HTTP_201_CREATED)

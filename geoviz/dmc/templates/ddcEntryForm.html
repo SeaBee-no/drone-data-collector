@@ -5,22 +5,13 @@
 {% block page_css %}
 <!--Refrence from http://techlaboratory.net/jquery-smartwizard-->
 
-<link href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" rel="stylesheet" type="text/css"/>
+
 {% leaflet_css plugins="ALL" %}
 
 
-<!--<link rel="stylesheet" type="text/css" href="https://cdn.rawgit.com/wenzhixin/multiple-select/e14b36de/multiple-select.css">-->
-
-<!--<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.1/css/bootstrap-multiselect.min.css"
-      integrity="sha512-jpey1PaBfFBeEAsKxmkM1Yh7fkH09t/XDVjAgYGrq1s2L9qPD/kKdXC/2I6t2Va8xdd9SanwPYHIAnyBRdPmig=="
-      crossorigin="anonymous" referrerpolicy="no-referrer"/>-->
 
 
-<link crossorigin="anonymous"
-      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css"
-      integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw=="
-      referrerpolicy="no-referrer" rel="stylesheet"/>
+
 
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet"
       type="text/css"/>
@@ -40,6 +31,8 @@
 
 
 <link href="{% static 'dmc/css/ddctoolEntryForm.css' %}" rel="stylesheet">
+
+
 
 {% endblock %}
 
@@ -249,7 +242,7 @@
 
                     <div class="tab-pane alert alert-primary" id="step-6" role="tabpanel">
 
-                        <h1>5</h1>
+                        <h1>6</h1>
                     </div>
 
 
@@ -266,18 +259,13 @@
 
 {% block page_js %}
 <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js" type="text/javascript"></script>
-<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js" type="text/javascript"></script>
 {% leaflet_js plugins="ALL" %}
-<!--<script src="https://cdn.rawgit.com/wenzhixin/multiple-select/e14b36de/multiple-select.js"></script>-->
-<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/1.1.1/js/bootstrap-multiselect.min.js"
-        integrity="sha512-fp+kGodOXYBIPyIXInWgdH2vTMiOfbLC9YqwEHslkUxc8JLI7eBL2UQ8/HbB5YehvynU3gA3klc84rAQcTQvXA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script> -->
-<script crossorigin="anonymous"
-        integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ=="
-        referrerpolicy="no-referrer"
-        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
+
+
 <script src="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/js/jquery.smartWizard.min.js"
         type="text/javascript"></script>
 <script src="{% static 'dmc/js/ddcEntryForm.js' %}"></script>
+
+
 
 {% endblock %}

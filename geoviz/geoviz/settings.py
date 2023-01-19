@@ -60,8 +60,10 @@ INSTALLED_APPS = [
     'simple_history',
     'import_export',
     'bootstrap_daterangepicker',
+    "bootstrap_datepicker_plus",
     'django_minio_backend',
     #'django_minio_backend.apps.DjangoMinioBackendConfig',
+    
     'home',
     'dmc',
 ]

@@ -103,7 +103,7 @@ color: #295C6F;
 
 .blinking {
     animation: blink 1s ease-in infinite;
-    z-index=999;
+    z-index:999;
   }
 
 @keyframes blink {

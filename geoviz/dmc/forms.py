@@ -3,9 +3,14 @@ from django.forms import ModelForm
 from django.contrib.gis import forms
 
 from bootstrap_daterangepicker import widgets, fields
+from bootstrap_datepicker_plus.widgets import DatePickerInput
+
 from .models import *
 from leaflet.forms.widgets import LeafletWidget
 from leaflet.forms.fields import GeometryCollectionField as MPF
+
+
+
 
 from django.forms.widgets import CheckboxSelectMultiple
 
@@ -14,6 +19,8 @@ import json
 from crispy_forms.layout import Layout, Div, Field, Submit
 from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
+
+
 
 
 class dmcForm(ModelForm):
@@ -51,7 +58,7 @@ class ddcForm(forms.Form):
     ## capture to db
     drone_type = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        choices=(('1', 'Drone'), ('2', 'Otter'), ('2', 'Other')), label="Drone Type", required=False
+        choices=(('Drone', 'Drone'), ('Otter', 'Otter'), ('Other', 'Other')), label="Drone Type", required=True
     )
 
     mision_name_list = forms.MultipleChoiceField(
@@ -87,7 +94,7 @@ class ddcForm(forms.Form):
     image_overlap = forms.IntegerField(label='Image Overlap', required=False)
 
     flight_altitude = forms.CharField(
-        label='Flight AGL Altitude (meter)', disabled=True)
+        label='Flight AGL Altitude (meter)', disabled=True, required=False)
 
     cloud_cover = forms.CharField(
         label='Cloud Cover', required=False, disabled=True)
@@ -109,28 +116,44 @@ class ddcForm(forms.Form):
     
     ## capture to db
     cdom = forms.IntegerField(
-        label='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)')
+        label='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)', required=False)
    
      ## capture to db
-    turbidity = forms.IntegerField(label='Turbidity- FNU (0-100)')
+    turbidity = forms.IntegerField(label='Turbidity- FNU (0-100)', required=False)
      
      ## capture to db
-    salinity = forms.IntegerField(label='Salinity- PSU (0-40)')
+    salinity = forms.IntegerField(label='Salinity- PSU (0-40)', required=False)
     
      ## capture to db
     water_temperature = forms.IntegerField(
-        label='Water Temperature (1.7<sup> o</sup>C – 35<sup> o</sup>C)')
+        label='Water Temperature (1.7<sup> o</sup>C – 35<sup> o</sup>C)', required=False)
     
      ## capture to db
-    secchi_depth = forms.IntegerField(label='Secchi Depth (metres)')
+    secchi_depth = forms.IntegerField(label='Secchi Depth (metres)', required=False)
     
     ## capture to db
     sensor_info_dates_last_calibration = forms.DateField(
-        label='Dates of last calibration')
+        widget=DatePickerInput(
+            options={
+            "format": "MM/DD/YYYY",
+            "showTodayButton": False,
+        },
+        ),
+        label="Dates of last calibration",
+        required=False    
+        )
      
+
+
      ## capture to db
     sensor_info_dates_last_maintenance = forms.DateField(
-        label='Dates of last maintenance',)
+           widget=DatePickerInput(
+            options={
+            "format": "MM/DD/YYYY",
+            "showTodayButton": False,
+        },
+           ),
+          label='Dates of last maintenance', required=False)
 
     # All uploaded
     # #mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
@@ -159,3 +182,6 @@ class ddcForm(forms.Form):
             Field('drone_type', css_class="form-check-inline"),
         )
         # self.helper.add_input(Submit('submit', 'Submit'))
+
+
+

@@ -143,7 +143,7 @@ class ddc_main(models.Model):
     
     flight_mission_name  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Flight Mission Name')
     
-    drone_type  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Drone Type')
+    drone_type  = models.CharField(null=False, blank=False, max_length=300,verbose_name='Drone Type')
     
     image_overlap  = models.PositiveIntegerField(null=True, blank=True, verbose_name='Image Overlap')
 
@@ -151,7 +151,7 @@ class ddc_main(models.Model):
                                                      verbose_name='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)')
     turbidity =models.PositiveIntegerField(null=True, blank=True,
                                                      verbose_name='Turbidity- FNU (0-100)')
-    Salinity =models.PositiveIntegerField(null=True, blank=True,
+    salinity =models.PositiveIntegerField(null=True, blank=True,
                                                      verbose_name='Salinity- PSU (0-40)')
     water_temperature =models.PositiveIntegerField(null=True, blank=True,
                                                 verbose_name='Water Temperature (1.7C – 35C)')
@@ -163,7 +163,7 @@ class ddc_main(models.Model):
     history = HistoricalRecords()
     
     def __str__(self):
-        return str(self.flight_mission_name) or 'NA'
+        return self.flight_mission_name or 'NA'
 
 
     class Meta:
