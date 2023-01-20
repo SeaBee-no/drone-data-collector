@@ -139,7 +139,7 @@ class dmc_main(models.Model):
 class ddc_main(models.Model):
     created_by = models.ForeignKey(user_profile, null=True, blank=True, on_delete=models.CASCADE,
                                    related_name='ddc_for_metadata')
-    flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id')
+    flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id',unique=True)
     
     flight_mission_name  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Flight Mission Name')
     

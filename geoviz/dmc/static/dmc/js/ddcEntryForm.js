@@ -57,96 +57,186 @@ document.addEventListener("DOMContentLoaded", function () {
     .on("click", (e) => {
       e.preventDefault();
 
-      const drinelogBook_extraPara = {
-        drone_type: $('input[name="drone_type"]:checked').val(),
-        flight_mission_guid: flightGUID,
-        flight_mission_name: $("#id_mision_name").val(),
-        image_overlap: $("#id_image_overlap").val(),
-        sensor_dates_last_calibration: $("#id_sensor_info_dates_last_calibration").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
-        sensor_dates_last_maintenance: $("#id_sensor_info_dates_last_maintenance").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
-        secchi_depth: $("#id_secchi_depth").val(),
-        turbidity: $("#id_turbidity").val(),
-        salinity: $("#id_salinity").val(),
-        water_temperature: $("#id_water_temperature").val(),
-        cdom: $("#id_cdom").val(),
-        csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
-      };
+      if ( !($('input[name="drone_type"]:checked').val() ==  undefined) && !(flightGUID.length == 0 )) {
 
+    $.getJSON(`${window.location.origin}/api/ddcregcheck/${flightGUID}`, function(data) {
+        if (data.response == "not_found") {
+          add_dronelogbook_record();
+        }
+        if (data.response == "found") {
+          update_dronelogbook_record(); 
+      }
 
-    if ($('input[name="drone_type"]:checked').val() && flightGUID ) {
-     $.post("/api/ddcadd/", drinelogBook_extraPara)
-     .done(function(data) {
+    }).fail(function(xhr, status, error) {
+      console.log("Error: " + status + " - " + error);
+  });
+} else {
+
+  $.confirm({
+    title: '<span class="text-danger"><b>Encountered an error!</b></span>',
+    content: '<span class="text-dark">Both the field <b>*Flight Mission</b>and <b>*Drone Type</b> must be selected.</span>',
+    type: 'red',
+    typeAnimated: true,
+    buttons: {
+        tryAgain: {
+            text: 'Close',
+            btnClass: 'btn-red',
+            action: function(){
+            }
+        },
        
-      
-      $.confirm({
-        title: '<span class="text-success"><b>successful!</b></span>',
-        content: '<span class="text-dark">Data has been store successfully</span>',
-        type: 'green',
-        typeAnimated: true,
-        buttons: {
-            tryAgain: {
-                text: 'Close',
-                btnClass: 'btn-green',
-                action: function(){
-                }
-            },
-           
-        }
-    });
-     
-     
-      })
-     .fail(function(jqXHR) {
-      
-      console.log(jqXHR);
+    }
+});
 
-      $.confirm({
-        title: '<span class="text-success"><b>Unsuccessful!</b></span>',
-        content: '<span class="text-dark">Error while saving data in database.</span>',
-        type: 'green',
-        typeAnimated: true,
-        buttons: {
-            tryAgain: {
-                text: 'Close',
-                btnClass: 'btn-green',
-                action: function(){
-                }
-            },
-           
-        }
-    });
-    
-    
-    });
- 
-    } else {
+}
 
-      if ( $('input[name="drone_type"]:checked').val() ==  undefined || flightGUID.length == 0 ) {
-      $.confirm({
-        title: '<span class="text-danger"><b>Encountered an error!</b></span>',
-        content: '<span class="text-dark">Both the field <b>*Flight Mission</b>and <b>*Drone Type</b> must be selected.</span>',
-        type: 'red',
-        typeAnimated: true,
-        buttons: {
-            tryAgain: {
-                text: 'Close',
-                btnClass: 'btn-red',
-                action: function(){
-                }
-            },
-           
-        }
+
+
+
+
+
+
+
     });
 
+// gather all parameter for dronelogbook to update or create
+const gatherFormpara_dronlogbook = (callType) => {
+
+  let para = {
+    drone_type: $('input[name="drone_type"]:checked').val(),
+    flight_mission_guid: flightGUID,
+    flight_mission_name: $("#id_mision_name").val(),
+    image_overlap: $("#id_image_overlap").val(),
+    sensor_dates_last_calibration: $("#id_sensor_info_dates_last_calibration").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
+    sensor_dates_last_maintenance: $("#id_sensor_info_dates_last_maintenance").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
+    secchi_depth: $("#id_secchi_depth").val(),
+    turbidity: $("#id_turbidity").val(),
+    salinity: $("#id_salinity").val(),
+    water_temperature: $("#id_water_temperature").val(),
+    cdom: $("#id_cdom").val(),
+    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+  };
+
+  if(callType == "add"){
+    return para;
+  }
+  
+  if(callType == "update"){
+   // ({flight_mission_guid, ...para} = para);
+    //({csrfmiddlewaretoken, ...para} = para);
+    Object.keys(para).forEach(key => (para[key] == null || para[key] === '') && delete para[key]);
+    return para;
   }
 
 
+}
 
 
-    }
+const add_dronelogbook_record = () =>{
+
+    $.post("/api/ddcreg/", gatherFormpara_dronlogbook('add'))
+    .done(function(data) {
+      
+     
+     $.confirm({
+       title: '<span class="text-success"><b>successful!</b></span>',
+       content: '<span class="text-dark">Data has been store successfully</span>',
+       type: 'green',
+       typeAnimated: true,
+       buttons: {
+           tryAgain: {
+               text: 'Close',
+               btnClass: 'btn-green',
+               action: function(){
+               }
+           },
+          
+       }
+   });
+    
+     })
+    .fail(function(jqXHR) {
+     
+    // console.log(jqXHR);
+
+     $.confirm({
+       title: '<span class="text-danger"><b>Unsuccessful!</b></span>',
+       content: '<span class="text-dark">Error while saving data in database.</span>',
+       type: 'red',
+       typeAnimated: true,
+       buttons: {
+           tryAgain: {
+               text: 'Close',
+               btnClass: 'btn-red',
+               action: function(){
+               }
+           },
+          
+       }
+   });
+   
+   
+   });
+
+ 
+}
 
 
-    });
+
+const update_dronelogbook_record = () => {
+
+ $.ajax({
+  type: 'PUT',
+  contentType: 'application/json',
+  url: `/api/ddcreg/${flightGUID}/`,
+  data: JSON.stringify(gatherFormpara_dronlogbook('update')),
+  success: function (response) {
+    $.confirm({
+      title: '<span class="text-success"><b>successful!</b></span>',
+      content: '<span class="text-dark">Data has been updated successfully</span>',
+      type: 'green',
+      typeAnimated: true,
+      buttons: {
+          tryAgain: {
+              text: 'Close',
+              btnClass: 'btn-green',
+              action: function(){
+              }
+          },
+         
+      }
+  });
+  },
+  error: function (jqXHR) {
+    $.confirm({
+      title: '<span class="text-danger"><b>Unsuccessful!</b></span>',
+      content: '<span class="text-dark">Error while saving data in database.</span>',
+      type: 'red',
+      typeAnimated: true,
+      buttons: {
+          tryAgain: {
+              text: 'Close',
+              btnClass: 'btn-red',
+              action: function(){
+              }
+          },
+         
+      }
+  });
+  }
+});
+
+
+
+
+
+}
+
+
+
+
+
+
 
   var btnList = $(
     '<button class= "btn btn-info" value="Input"  type="button"><i class="fas fa-solid  fa-list-ol"></i></button>'
@@ -203,6 +293,32 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // force to mutiselect to single
   $("#id_mision_name_list").on("click", "option", function (event) {
+
+    flightGUID =  $("#id_mision_name_list").find(":selected").val();
+
+    $.getJSON(`${window.location.origin}/api/ddcregcheck/${flightGUID}`, (data) => {
+   
+   let da = data.response == "found" ? data.data : null
+
+// map the value from the droneextra para to form
+    //$('input[name="drone_type"]:checked').val()
+///////// to be fix***************************
+   //( da != null ? data.dat : null ? $(`input[name='drone_type'][value='${da.drone_type}']`).prop("checked", true) : $(`input[name='${da.drone_type}']`).prop("checked", false));
+    
+    // flight_mission_guid: flightGUID,
+    // flight_mission_name: $("#id_mision_name").val(),
+    // image_overlap: $("#id_image_overlap").val(),
+    // sensor_dates_last_calibration: $("#id_sensor_info_dates_last_calibration").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
+    // sensor_dates_last_maintenance: $("#id_sensor_info_dates_last_maintenance").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
+    // secchi_depth: $("#id_secchi_depth").val(),
+    // turbidity: $("#id_turbidity").val(),
+    // salinity: $("#id_salinity").val(),
+    // water_temperature: $("#id_water_temperature").val(),
+    // cdom: $("#id_cdom").val(),
+    // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+
+
+
     // clear the previous layers from group layer
     gp_layer_projArea.clearLayers();
     gp_layer_proLoca.clearLayers();
@@ -271,7 +387,7 @@ document.addEventListener("DOMContentLoaded", function () {
               coords.map((coord) => coord.reverse())
             );
             el = L.polyline(el, { color: "#FFFF00", weight: 2, opacity: 0.5 });
-            console.log(el);
+           // console.log(el);
             gp_layer_projArea.addLayer(el);
           }
         });
@@ -293,7 +409,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let tasks_drone = [];
         Promise.all(tasks_equipment).then((equipmentList) => {
-          console.log(equipmentList);
+         // console.log(equipmentList);
 
           $("#sensorInfoList").empty();
 
@@ -385,6 +501,13 @@ document.addEventListener("DOMContentLoaded", function () {
         );
       }
     );
+
+
+  }).fail(function(xhr, status, error) {
+    console.log("Error: " + status + " - " + error);
+});
+
+
   });
 
   // update the form value

@@ -4,7 +4,7 @@ from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 
 from django.views.generic import CreateView, UpdateView , ListView, DeleteView
-from rest_framework.authentication import TokenAuthentication
+
 from rest_framework.views import APIView
 
 from .forms import *
@@ -23,9 +23,14 @@ from django.shortcuts import render
 from django.conf import settings as conf_settings
 from pathlib import Path
 import os
-from rest_framework import generics
+#from rest_framework import generics
 
 from rest_framework.permissions import IsAuthenticated
+
+from django.contrib import messages
+
+from rest_framework import  generics
+
 
 
 
@@ -329,3 +334,27 @@ class dronelogBook_add(generics.CreateAPIView):
         data = serializer.validated_data
         serializer.save()
         return Response({"success": "Data has been successfully created."}, status=status.HTTP_201_CREATED)
+
+
+
+class dronelogBook_update(generics.UpdateAPIView):
+    queryset = ddc_main.objects.all()
+    serializer_class = dronelogBook_serializers
+    lookup_field = 'flight_mission_guid'
+
+    def perform_update(self, serializer):
+        data = serializer.validated_data
+        serializer.save()
+        return Response({"success": "Data has been successfully updated."}, status=status.HTTP_200_OK)
+
+
+class dronelogBook_recordcheck(generics.GenericAPIView):
+    queryset = ddc_main.objects.all()
+    serializer_class = dronelogBook_serializers
+
+    def get(self, request, guid):
+        instance = ddc_main.objects.filter(flight_mission_guid=guid)
+        if not instance:
+            return Response({"response": "not_found"}, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(instance[0])
+        return Response({"response": "found",'data':serializer.data}, status=status.HTTP_200_OK)
