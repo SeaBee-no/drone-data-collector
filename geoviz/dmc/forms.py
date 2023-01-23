@@ -20,7 +20,8 @@ from crispy_forms.layout import Layout, Div, Field, Submit
 from crispy_forms.bootstrap import InlineRadios
 from crispy_forms.helper import FormHelper
 
-
+from django.utils.safestring import mark_safe
+from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 
 class dmcForm(ModelForm):
@@ -91,7 +92,7 @@ class ddcForm(forms.Form):
         label='Flight Duration in Minute', disabled=True, required=False)
     
     ## capture to db
-    image_overlap = forms.IntegerField(label='Image Overlap', required=False)
+    image_overlap = forms.IntegerField(label='Image Overlap', required=False,disabled=True)
 
     flight_altitude = forms.CharField(
         label='Flight AGL Altitude (meter)', disabled=True, required=False)
@@ -116,20 +117,20 @@ class ddcForm(forms.Form):
     
     ## capture to db
     cdom = forms.IntegerField(
-        label='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)', required=False)
+        label='Cdom– ug/l Quinine sulphate (0-500 -upper figure is a maximum guess and should be adjustable)', required=False, disabled=True)
    
      ## capture to db
-    turbidity = forms.IntegerField(label='Turbidity- FNU (0-100)', required=False)
+    turbidity = forms.IntegerField(label='Turbidity- FNU (0-100)', required=False, disabled=True)
      
      ## capture to db
-    salinity = forms.IntegerField(label='Salinity- PSU (0-40)', required=False)
+    salinity = forms.IntegerField(label='Salinity- PSU (0-40)', required=False, disabled=True)
     
      ## capture to db
     water_temperature = forms.IntegerField(
-        label='Water Temperature (1.7<sup> o</sup>C – 35<sup> o</sup>C)', required=False)
+        label='Water Temperature (1.7<sup> o</sup>C – 35<sup> o</sup>C)', required=False, disabled=True)
     
      ## capture to db
-    secchi_depth = forms.IntegerField(label='Secchi Depth (metres)', required=False)
+    secchi_depth = forms.IntegerField(label='Secchi Depth (metres)', required=False, disabled=True)
     
     ## capture to db
     sensor_info_dates_last_calibration = forms.DateField(
@@ -140,7 +141,8 @@ class ddcForm(forms.Form):
         },
         ),
         label="Dates of last calibration",
-        required=False    
+        required=False,
+        disabled=True   
         )
      
 
@@ -153,7 +155,8 @@ class ddcForm(forms.Form):
             "showTodayButton": False,
         },
            ),
-          label='Dates of last maintenance', required=False)
+          label='Dates of last maintenance', required=False
+          , disabled=True)
 
     # All uploaded
     # #mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
@@ -178,8 +181,10 @@ class ddcForm(forms.Form):
 
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            # InlineRadios('drone_type'),
-            Field('drone_type', css_class="form-check-inline"),
+        
+        AppendedText('image_overlap', '.00'),
+          
+            
         )
         # self.helper.add_input(Submit('submit', 'Submit'))
 

@@ -296,10 +296,31 @@ const update_dronelogbook_record = () => {
 
     flightGUID =  $("#id_mision_name_list").find(":selected").val();
 
-    $.getJSON(`${window.location.origin}/api/ddcregcheck/${flightGUID}`, (data) => {
-   
-   let da = data.response == "found" ? data.data : null
+    $.getJSON(`${window.location.origin}/api/ddcregcheck/${flightGUID}`, (event) => {
+   data = event.data;
+   let da_drone_type = event.response == "found" && data.drone_type != null  ? data : null;
+   da_drone_type != null ? $(`input[name='drone_type'][value='${data.drone_type}']`).prop("checked", true) : $("input[name='drone_type']").prop("checked", false);
 
+
+  $("#id_image_overlap").val(event.response == "found" && data.image_overlap != null  ? data.image_overlap : null)
+
+$("#id_sensor_info_dates_last_calibration").val(
+  event.response == "found" && data.sensor_dates_last_calibration != null  ? data.sensor_dates_last_calibration.replace(/(\d{4})-(\d{2})-(\d{2})/, "$2/$3/$1") : null
+);
+
+$("#id_sensor_info_dates_last_maintenance").val(
+  event.response == "found" && data.sensor_dates_last_maintenance != null  ? data.sensor_dates_last_maintenance.replace(/(\d{4})-(\d{2})-(\d{2})/, "$2/$3/$1") : null
+);
+
+$("#id_secchi_depth").val(event.response == "found" && data.secchi_depth != null  ? data.secchi_depth : null);
+
+$("#id_turbidity").val(event.response == "found" && data.turbidity != null  ? data.turbidity : null);
+
+$("#id_salinity").val(event.response == "found" && data.salinity != null  ? data.salinity : null);
+
+$("#id_water_temperature").val(event.response == "found" && data.water_temperature != null  ? data.water_temperature : null);
+
+$("#id_cdom").val(event.response == "found" && data.cdom != null  ? data.cdom : null)
 // map the value from the droneextra para to form
     //$('input[name="drone_type"]:checked').val()
 ///////// to be fix***************************
@@ -336,7 +357,7 @@ const update_dronelogbook_record = () => {
         let flight = returndata_flight;
         console.log(flight);
 
-        //store flight guid
+        //store flight drone
         flightGUID = flight.guid;
 
         //select project info
@@ -541,3 +562,14 @@ const update_dronelogbook_record = () => {
     }
   );
 });
+
+
+
+$('.edit-icon, .edit-icon-for-calander').on('click', function(ev){
+
+  let idObj= $(ev.currentTarget).closest('div').find('input.form-control')[0].id;
+  $(`#${idObj}`).attr("disabled", !$(`#${idObj}`).attr("disabled"));
+
+});
+
+
