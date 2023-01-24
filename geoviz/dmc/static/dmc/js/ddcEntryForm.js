@@ -100,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 // gather all parameter for dronelogbook to update or create
-const gatherFormpara_dronlogbook = (callType) => {
+const gatherFormpara_dronlogbook = () => {
 
   let para = {
     drone_type: $('input[name="drone_type"]:checked').val(),
@@ -114,69 +114,72 @@ const gatherFormpara_dronlogbook = (callType) => {
     salinity: $("#id_salinity").val(),
     water_temperature: $("#id_water_temperature").val(),
     cdom: $("#id_cdom").val(),
-    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+    //csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
   };
 
-  if(callType == "add"){
-    return para;
-  }
-  
-  if(callType == "update"){
-   // ({flight_mission_guid, ...para} = para);
-    //({csrfmiddlewaretoken, ...para} = para);
-    Object.keys(para).forEach(key => (para[key] == null || para[key] === '') && delete para[key]);
-    return para;
-  }
 
+  Object.keys(para).forEach(key => (para[key] == null || para[key] === '') && delete para[key]);
+  return para;
 
 }
 
 
 const add_dronelogbook_record = () =>{
 
-    $.post("/api/ddcreg/", gatherFormpara_dronlogbook('add'))
-    .done(function(data) {
-      
-     
-     $.confirm({
-       title: '<span class="text-success"><b>successful!</b></span>',
-       content: '<span class="text-dark">Data has been store successfully</span>',
-       type: 'green',
-       typeAnimated: true,
-       buttons: {
-           tryAgain: {
-               text: 'Close',
-               btnClass: 'btn-green',
-               action: function(){
-               }
-           },
-          
-       }
-   });
-    
-     })
-    .fail(function(jqXHR) {
-     
-    // console.log(jqXHR);
 
-     $.confirm({
-       title: '<span class="text-danger"><b>Unsuccessful!</b></span>',
-       content: '<span class="text-dark">Error while saving data in database.</span>',
-       type: 'red',
-       typeAnimated: true,
-       buttons: {
-           tryAgain: {
-               text: 'Close',
-               btnClass: 'btn-red',
-               action: function(){
-               }
-           },
-          
-       }
-   });
-   
-   
-   });
+
+
+//####
+$.ajax({
+  type: 'POST',
+  contentType: 'application/json',
+  url: `/api/ddcreg/`,
+  data: JSON.stringify(gatherFormpara_dronlogbook()),
+  headers: { "X-CSRFToken": document.getElementsByName('csrfmiddlewaretoken')[0].value },
+  success: function (response) {
+    $.confirm({
+      title: '<span class="text-success"><b>successful!</b></span>',
+      content: '<span class="text-dark">Data has been store successfully</span>',
+      type: 'green',
+      typeAnimated: true,
+      buttons: {
+          tryAgain: {
+              text: 'Close',
+              btnClass: 'btn-green',
+              action: function(){
+              }
+          },
+         
+      }
+  });
+  },
+  error: function (jqXHR) {
+    console.log(jqXHR);
+    $.confirm({
+      title: '<span class="text-danger"><b>Unsuccessful!</b></span>',
+      content: '<span class="text-dark">Error while saving data in database.</span>',
+      type: 'red',
+      typeAnimated: true,
+      buttons: {
+          tryAgain: {
+              text: 'Close',
+              btnClass: 'btn-red',
+              action: function(){
+              }
+          },
+         
+      }
+  });
+  }
+});
+//###
+
+
+
+
+
+
+
 
  
 }
@@ -189,7 +192,8 @@ const update_dronelogbook_record = () => {
   type: 'PUT',
   contentType: 'application/json',
   url: `/api/ddcreg/${flightGUID}/`,
-  data: JSON.stringify(gatherFormpara_dronlogbook('update')),
+  data: JSON.stringify(gatherFormpara_dronlogbook()),
+  headers: { "X-CSRFToken": document.getElementsByName('csrfmiddlewaretoken')[0].value },
   success: function (response) {
     $.confirm({
       title: '<span class="text-success"><b>successful!</b></span>',
@@ -208,6 +212,7 @@ const update_dronelogbook_record = () => {
   });
   },
   error: function (jqXHR) {
+    console.log(jqXHR);
     $.confirm({
       title: '<span class="text-danger"><b>Unsuccessful!</b></span>',
       content: '<span class="text-dark">Error while saving data in database.</span>',
@@ -561,6 +566,35 @@ $("#id_cdom").val(event.response == "found" && data.cdom != null  ? data.cdom : 
       }
     }
   );
+
+
+
+
+sleep(1000).then(() => {
+
+// bootstap date picker take time to configure properly while loading the teh applicatiopn
+$('#id_sensor_info_dates_last_calibration').attr('disabled', true);
+$('#id_sensor_info_dates_last_maintenance').attr('disabled', true);
+});
+
+
+
+sleep(3000).then(() => {
+
+  let guid = new URLSearchParams(location.search).get("guid");
+ 
+  console.log("guid:--"+ guid);
+
+  });
+
+
+
+
+
+
+
+
+
 });
 
 
@@ -569,7 +603,20 @@ $('.edit-icon, .edit-icon-for-calander').on('click', function(ev){
 
   let idObj= $(ev.currentTarget).closest('div').find('input.form-control')[0].id;
   $(`#${idObj}`).attr("disabled", !$(`#${idObj}`).attr("disabled"));
+  $(ev.currentTarget).toggleClass('text-secondary');
 
 });
 
+
+$('.edit-icon-for-radio').on('click', function(ev){
+
+  let idObj= $(ev.currentTarget).closest('div').find('.form-group')[0].id
+
+  $(ev.currentTarget).toggleClass('text-secondary');
+
+  $(`#${idObj}`).find('input[type="radio"]').
+  attr('disabled', $(`#${idObj}`).find('input[type="radio"]').
+  attr('disabled') === 'disabled' ? false : true);
+
+});
 

@@ -31,8 +31,7 @@ from django.contrib import messages
 
 from rest_framework import  generics
 
-
-
+from django.views.decorators.csrf import csrf_exempt
 
 #from rest_framework.permissions import IsAuthenticated 
 
@@ -297,21 +296,25 @@ def get_data_dlb_bypage(opration,page_num):
 
 
        
-    
+#@login_required(login_url='/admin/login/')
 def ddc(request):
     context = {}
-
-    
-    #initial_dict = {
-    #     "created_by" : request.user.username or None,
-      
-    # }
-    # form = ddcForm(request.POST or None, initial = initial_dict)
     form = ddcForm(request.POST or None)
     context['form'] = form
     return render(request, 'ddcEntryForm.html',context)
 
 
+def ddc_list(request):
+    
+    context = {}
+
+    if request.user.is_superuser or request.user.is_staff:
+        objList= ddc_main.objects.all().order_by('flight_mission_name')
+    else:
+        objList= ddc_main.objects.filter(created_by__user__username=request.user).order_by('flight_mission_name')
+
+    context['objList'] = objList
+    return render(request, 'ddcEntryList.html',context)
 
 
 
@@ -323,27 +326,29 @@ class dronelogBook_serializers(serializers.ModelSerializer):
         fields = '__all__'
         #exclude = ('created_by',)
 
-
 class dronelogBook_add(generics.CreateAPIView):
 
-  #  permission_classes = (IsAuthenticated,)
+    #permission_classes = (IsAuthenticated,)
     queryset = ddc_main.objects.all()
     serializer_class = dronelogBook_serializers
 
     def perform_create(self, serializer):
         data = serializer.validated_data
+        data["created_by"] = self.request.user
         serializer.save()
         return Response({"success": "Data has been successfully created."}, status=status.HTTP_201_CREATED)
 
 
 
 class dronelogBook_update(generics.UpdateAPIView):
+    #permission_classes = (IsAuthenticated,)
     queryset = ddc_main.objects.all()
     serializer_class = dronelogBook_serializers
     lookup_field = 'flight_mission_guid'
 
     def perform_update(self, serializer):
         data = serializer.validated_data
+        data["created_by"] = self.request.user
         serializer.save()
         return Response({"success": "Data has been successfully updated."}, status=status.HTTP_200_OK)
 

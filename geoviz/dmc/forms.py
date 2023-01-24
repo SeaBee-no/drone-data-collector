@@ -59,7 +59,9 @@ class ddcForm(forms.Form):
     ## capture to db
     drone_type = forms.ChoiceField(
         widget=forms.RadioSelect(),
-        choices=(('Drone', 'Drone'), ('Otter', 'Otter'), ('Other', 'Other')), label="Drone Type", required=True
+        choices=(('Drone', 'Drone'), ('Otter', 'Otter'), ('Other', 'Other')), label="Drone Type", 
+        required=True,
+        disabled=True
     )
 
     mision_name_list = forms.MultipleChoiceField(
@@ -138,11 +140,11 @@ class ddcForm(forms.Form):
             options={
             "format": "MM/DD/YYYY",
             "showTodayButton": False,
-        },
+        }
         ),
         label="Dates of last calibration",
         required=False,
-        disabled=True   
+       # disabled=True   
         )
      
 
@@ -155,8 +157,9 @@ class ddcForm(forms.Form):
             "showTodayButton": False,
         },
            ),
-          label='Dates of last maintenance', required=False
-          , disabled=True)
+          label='Dates of last maintenance', 
+          required=False
+            )
 
     # All uploaded
     # #mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
@@ -182,8 +185,6 @@ class ddcForm(forms.Form):
         self.helper = FormHelper()
         self.helper.layout = Layout(
         
-        AppendedText('image_overlap', '.00'),
-          
             
         )
         # self.helper.add_input(Submit('submit', 'Submit'))
