@@ -6,6 +6,10 @@ from django.contrib.postgres.fields import DateTimeRangeField
 import datetime
 from django_minio_backend import MinioBackend, iso_date_prefix
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.db.models.fields.files import FieldFile
+
 windDirectionChoices= (
     ("N", "N"),
     ("NE", "NE"),
@@ -110,11 +114,11 @@ class dmc_main(models.Model):
     dron_info = models.ManyToManyField(drone_info_list ,blank=True,  related_name='dmc_for_metadata', verbose_name='Drone Information')
     sensor_info = models.ManyToManyField(sensor_info_list,blank=True,  related_name='dmc_for_metadata',verbose_name='Sensor Information')
     # All uploaded
-    #mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
-    mosaiced_image = models.FileField(null=True, blank=True,
-                                      storage=MinioBackend(bucket_name='dmc'),
-                                      verbose_name='Upload single mosaiced file',
-                                      upload_to=iso_date_prefix)
+    mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
+    # mosaiced_image = models.FileField(null=True, blank=True,
+    #                                   storage=MinioBackend(bucket_name='dmc'),
+    #                                   verbose_name='Upload single mosaiced file',
+    #                                   upload_to=iso_date_prefix)
     row_image = models.FileField(null=True, blank=True, verbose_name='Upload raw images a single .zip file', upload_to='dmcData/rowImages/')
     ground_control_point = models.FileField(null=True, blank=True, verbose_name='Upload ground control point as .csv', upload_to='dmcData/ground_control_point/')
     ground_truth_point = models.FileField(null=True, blank=True, verbose_name='Upload ground truth point as .csv', upload_to='dmcData/ground_truth_point/')
@@ -168,3 +172,49 @@ class ddc_main(models.Model):
 
     class Meta:
         verbose_name_plural = "Dronelogbook additional parameter"
+
+def get_iso_date() -> str:
+    now = datetime.datetime.utcnow().replace(tzinfo=utc)
+    return f"{now.year}-{now.month}-{now.day}"
+
+class ddc_upload(models.Model):
+     #flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id',unique=True)
+     
+
+
+     def delete(self, *args, **kwargs):
+        """
+        Delete must be overridden because the inherited delete method does not call `self.file.delete()`.
+        """
+        self.mosaiced_image.delete()
+        super(ddc_upload, self).delete(*args, **kwargs)
+
+ 
+
+
+
+     mosaiced_image = models.FileField(verbose_name="Object Upload",
+                                       storage=MinioBackend(  
+                                           bucket_name='dmc',
+                                       ),
+                                       upload_to=iso_date_prefix)
+     
+    
+    
+    #  mosaiced_image = models.FileField(null=True, blank=True,
+    #                                   storage=MinioBackend(bucket_name='dmc'),
+    #                                   verbose_name='Upload single mosaiced file',
+    #                                   upload_to=iso_date_prefix)
+ 
+     
+     history = HistoricalRecords()
+
+
+
+    
+    #  def __str__(self):
+    #     return self.id or 'NA'
+
+
+     class Meta:
+        verbose_name_plural = "Seabee bucket"

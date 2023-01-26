@@ -15,7 +15,7 @@
 
 
 <p class="float-right">
-        <a class="btn btn-info" href="{% url 'dmcadd' %}"><i class="fas fa-plus-circle"></i> Add MetaData </a>
+        <a class="btn btn-info" href="{% url 'ddc' %}"><i class="fas fa-plus-circle"></i> Add MetaData </a>
     </p>
          <table  class="table table-striped table-bordered table-hover mt-3">
 
@@ -37,7 +37,7 @@
                  <td class=""><strong>{{ forloop.counter }}</strong></td>
 
 
-                <td class=""><a class="text-primary" href=""><b>{{ obj.flight_mission_name }}</b></a></td>
+                <td class=""><a class="text-primary" href="{% url 'ddc' %}?guid={{ obj.flight_mission_guid }}"><b>{{ obj.flight_mission_name }}</b></a></td>
 
 
                 <td> <a class="text-info" href="{% url 'ddc' %}?guid={{ obj.flight_mission_guid }}"><i class="fas fa-edit"></i></a></td>
@@ -57,7 +57,7 @@
      </tbody>
         </table>
 <p class="float-right">
-        <a class="btn btn-info" href="{% url 'dmcadd' %}"><i class="fas fa-plus-circle"></i> Add MetaData </a>
+        <a class="btn btn-info" href="{% url 'ddc' %}"><i class="fas fa-plus-circle"></i> Add MetaData </a>
     </p>
 
 

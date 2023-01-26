@@ -173,11 +173,12 @@ class ddcForm(forms.Form):
     # ground_truth_point = models.FileField(null=True, blank=True, verbose_name='Upload ground truth point as .csv', upload_to='dmcData/ground_truth_point/')
     # dronePath = models.FileField(null=True, blank=True, verbose_name='Upload drone path file as .kml',
     #                                       upload_to='dmcData/donePath')
-
+   
     def __init__(self, *args, **kwargs):
         super(ddcForm, self).__init__(*args, **kwargs)
 
         obj = requests.get(f'http://localhost:8000/api/dronproject/').json()
+
 
         self.fields['mision_name_list'].choices = [
             (val['Identifier'], val['Flight Name'] + "----" + val['Location']) for val in obj]
@@ -187,6 +188,7 @@ class ddcForm(forms.Form):
         
             
         )
+
         # self.helper.add_input(Submit('submit', 'Submit'))
 
 

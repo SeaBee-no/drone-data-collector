@@ -296,14 +296,14 @@ def get_data_dlb_bypage(opration,page_num):
 
 
        
-#@login_required(login_url='/admin/login/')
+@login_required(login_url='/admin/login/')
 def ddc(request):
     context = {}
     form = ddcForm(request.POST or None)
     context['form'] = form
     return render(request, 'ddcEntryForm.html',context)
 
-
+@login_required(login_url='/admin/login/')
 def ddc_list(request):
     
     context = {}

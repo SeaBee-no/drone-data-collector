@@ -62,6 +62,7 @@ INSTALLED_APPS = [
     'bootstrap_daterangepicker',
     "bootstrap_datepicker_plus",
     'django_minio_backend',
+
     #'django_minio_backend.apps.DjangoMinioBackendConfig',
     
     'home',
@@ -276,7 +277,7 @@ MINIO_PUBLIC_BUCKETS = [
 MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
 # MINIO_MEDIA_FILES_BUCKET = 'my-media-files-bucket'  # replacement for MEDIA_ROOT
 # MINIO_STATIC_FILES_BUCKET = 'my-static-files-bucket'  # replacement for STATIC_ROOT
-MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
+#MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
 
 # REST_FRAMEWORK config
 # REST_FRAMEWORK = {
@@ -284,3 +285,4 @@ MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing,
 #         'rest_framework.authentication.TokenAuthentication',  # <-- And here
 #     ],
 # }
+
