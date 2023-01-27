@@ -64,6 +64,9 @@ class ddcForm(forms.Form):
         disabled=True
     )
 
+    flight_mission_guid = forms.CharField(
+        label='flight GUID', disabled=False, required=False)
+
     mision_name_list = forms.MultipleChoiceField(
         widget=forms.SelectMultiple(attrs={
             'size': 20,
@@ -160,20 +163,12 @@ class ddcForm(forms.Form):
           label='Dates of last maintenance', 
           required=False
             )
+    
+    mosaiced_image = forms.FileField(required=False, label='Upload your file1')
+    mosaiced_image2 = forms.FileField(required=False, label='Upload your file2')
 
-    # All uploaded
-    # #mosaiced_image = models.FileField(null=True, blank=True, verbose_name='Upload single mosaiced file', upload_to='dmcData/mosaiced/')
 
-    # mosaiced_image = models.FileField(null=True, blank=True,
-    #                                   storage=MinioBackend(bucket_name='dmc'),
-    #                                   verbose_name='Upload single mosaiced file',
-    #                                   upload_to=iso_date_prefix)
-    # row_image = models.FileField(null=True, blank=True, verbose_name='Upload raw images a single .zip file', upload_to='dmcData/rowImages/')
-    # ground_control_point = models.FileField(null=True, blank=True, verbose_name='Upload ground control point as .csv', upload_to='dmcData/ground_control_point/')
-    # ground_truth_point = models.FileField(null=True, blank=True, verbose_name='Upload ground truth point as .csv', upload_to='dmcData/ground_truth_point/')
-    # dronePath = models.FileField(null=True, blank=True, verbose_name='Upload drone path file as .kml',
-    #                                       upload_to='dmcData/donePath')
-   
+    
     def __init__(self, *args, **kwargs):
         super(ddcForm, self).__init__(*args, **kwargs)
 
@@ -190,6 +185,3 @@ class ddcForm(forms.Form):
         )
 
         # self.helper.add_input(Submit('submit', 'Submit'))
-
-
-

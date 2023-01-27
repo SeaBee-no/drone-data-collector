@@ -303,6 +303,9 @@ def ddc(request):
     context['form'] = form
     return render(request, 'ddcEntryForm.html',context)
 
+
+
+
 @login_required(login_url='/admin/login/')
 def ddc_list(request):
     
@@ -363,3 +366,49 @@ class dronelogBook_recordcheck(generics.GenericAPIView):
             return Response({"response": "not_found"}, status=status.HTTP_200_OK)
         serializer = self.get_serializer(instance[0])
         return Response({"response": "found",'data':serializer.data}, status=status.HTTP_200_OK)
+
+
+
+######################################################################################
+
+
+## Upload data
+
+class uploaddata_serializers(serializers.ModelSerializer):
+    
+    mosaiced_image = serializers.FileField(required=False)
+    mosaiced_image2 = serializers.FileField(required=False)
+    
+    
+    class Meta:
+        model = ddc_upload
+        fields = '__all__'
+
+
+
+class uploaddata_add(generics.CreateAPIView):
+    
+    queryset = ddc_upload.objects.all()
+    serializer_class = uploaddata_serializers
+
+    def perform_create(self, serializer):
+        try:
+            serializer.save(**serializer.validated_data)
+        except Exception as e:
+            return Response({"error": "Failed to upload data. Error: {}".format(str(e))}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success": "Data has been successfully uploded."}, status=status.HTTP_200_OK)
+
+
+
+class uploaddata_update(generics.UpdateAPIView):
+    
+    queryset = ddc_upload.objects.all()
+    serializer_class = uploaddata_serializers
+    lookup_field = 'flight_mission_guid'
+
+    def perform_update(self, serializer):
+        try:
+            serializer.save(**serializer.validated_data)
+        except Exception as e:
+            return Response({"error": "Failed to update data. Error: {}".format(str(e))}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"success": "Data has been successfully updated."}, status=status.HTTP_200_OK)

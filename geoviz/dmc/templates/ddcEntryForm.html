@@ -11,7 +11,7 @@
 
 
 
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-file-upload/4.0.11/uploadfile.min.css" integrity="sha512-MudWpfaBG6v3qaF+T8kMjKJ1Qg8ZMzoPsT5yWujVfvIgYo2xgT1CvZq+r3Ks2kiUKcpo6/EUMyIUhb3ay9lG7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet"
       type="text/css"/>
@@ -281,7 +281,40 @@ border-radius: 0px;
 
                     <div class="tab-pane alert alert-primary" id="step-5" role="tabpanel">
 
-                        <h1>5</h1>
+                       
+                        <div class="form-row">
+                            
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.flight_mission_guid | as_crispy_field   }}
+                            </div>
+
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.mosaiced_image | as_crispy_field   }}
+                            </div>
+
+
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.mosaiced_image2 | as_crispy_field   }}
+                            </div>
+
+
+                            <div class="form-group col-md-12 mb-0 mx-auto text-center pt-5">
+                                <button id="id_upload_data" type="button" class="btn btn-success rounded-pill"> Upload</button>
+                                <div class="progress">
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                  </div>
+
+                            </div>
+               
+
+                     
+                          
+                        </div>
+
+
+
+
+
                     </div>
 
                     <div class="tab-pane alert alert-primary" id="step-6" role="tabpanel">
@@ -308,6 +341,10 @@ border-radius: 0px;
 
 <script src="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/js/jquery.smartWizard.min.js"
         type="text/javascript"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-file-upload/4.0.11/jquery.uploadfile.min.js" integrity="sha512-uwNlWrX8+f31dKuSezJIHdwlROJWNkP6URRf+FSWkxSgrGRuiAreWzJLA2IpyRH9lN2H67IP5H4CxBcAshYGNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script src="{% static 'dmc/js/ddcEntryForm.js' %}"></script>
 
 

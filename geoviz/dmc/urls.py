@@ -25,4 +25,7 @@ path('api/ddcreg/', dronelogBook_add.as_view(), name='ddcadd'),
 path('api/ddcreg/<str:flight_mission_guid>/',  dronelogBook_update.as_view(), name='ddcupdate'),
 path('api/ddcregcheck/<str:guid>/', dronelogBook_recordcheck.as_view(), name='ddccheck'),
 
+path('api/uploadreg/', uploaddata_add.as_view(), name='uploadadd'),
+path('api/uploadreg/<str:flight_mission_guid>/',  uploaddata_update.as_view(), name='uploadupdate'),
+
 ]

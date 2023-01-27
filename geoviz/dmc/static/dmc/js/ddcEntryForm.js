@@ -628,3 +628,80 @@ $(".edit-icon-for-radio").on("click", function (ev) {
         : true
     );
 });
+
+
+
+// upload data to minio
+$(".progress").hide();
+$("#id_upload_data").click(function() {
+  
+  let formData = new FormData();
+  formData.append('mosaiced_image', $('#id_mosaiced_image')[0].files[0] != null? $('#id_mosaiced_image')[0].files[0] :"");
+  formData.append('mosaiced_image2', $('#id_mosaiced_image2')[0].files[0] != null? $('#id_mosaiced_image2')[0].files[0] :"");
+  formData.append('flight_mission_guid', $('#id_flight_mission_guid').val());
+   $(".progress").show();
+
+
+  $.ajax({
+    xhr: function() {
+      var xhr = new XMLHttpRequest();
+      xhr.upload.onprogress = function(e) {
+        var percent = Math.round((e.loaded / e.total) * 100);
+        $(".progress-bar").width(percent + "%").text(percent + "%");
+      };
+      return xhr;
+    },
+    type: "POST",
+    url: "/api/uploadreg/",
+    //enctype: "multipart/form-data",
+    data: formData,
+    headers: {
+      "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
+        .value,
+    },
+    contentType: false,
+    processData: false,
+    success: function(data) {
+        console.log("Success!");
+        $(".progress").fadeOut();
+    },
+    error: function(error) {
+        console.log("Error:", error);
+    }
+});
+
+
+});
+
+
+/* 
+$.ajax({
+  xhr: function() {
+      var xhr = new window.XMLHttpRequest();
+      xhr.upload.addEventListener("progress", function(evt) {
+          if (evt.lengthComputable) {
+              var percentComplete = evt.loaded / evt.total;
+              percentComplete = parseInt(percentComplete * 100);
+              $("#progressbar").width(percentComplete+'%');
+              $("#progressbar").html(percentComplete+'%');
+          }
+      }, false);
+      return xhr;
+  },
+  type: "POST",
+  url: "/api/uploadreg/",
+  //enctype: "multipart/form-data",
+  data: formData,
+  headers: {
+    "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
+      .value,
+  },
+  contentType: false,
+  processData: false,
+  success: function(data) {
+      console.log("Success!");
+  },
+  error: function(error) {
+      console.log("Error:", error);
+  }
+}); */

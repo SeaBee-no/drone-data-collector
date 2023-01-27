@@ -178,26 +178,32 @@ def get_iso_date() -> str:
     return f"{now.year}-{now.month}-{now.day}"
 
 class ddc_upload(models.Model):
-     #flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id',unique=True)
+  
      
 
-
-     def delete(self, *args, **kwargs):
+    def delete(self, *args, **kwargs):
         """
         Delete must be overridden because the inherited delete method does not call `self.file.delete()`.
         """
         self.mosaiced_image.delete()
         super(ddc_upload, self).delete(*args, **kwargs)
 
+
  
 
+    flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id',unique=True)
 
-
-     mosaiced_image = models.FileField(verbose_name="Object Upload",
+    mosaiced_image = models.FileField(verbose_name="Object Upload",
+                                       storage=MinioBackend(  
+                                           bucket_name='dmc', 
+                                       ),
+                                       upload_to=iso_date_prefix, null=False, blank=False)
+    mosaiced_image2 = models.FileField(verbose_name="Object Upload",
                                        storage=MinioBackend(  
                                            bucket_name='dmc',
                                        ),
-                                       upload_to=iso_date_prefix)
+                                       upload_to=iso_date_prefix, null=False, blank=False)
+    
      
     
     
@@ -207,14 +213,14 @@ class ddc_upload(models.Model):
     #                                   upload_to=iso_date_prefix)
  
      
-     history = HistoricalRecords()
+    history = HistoricalRecords()
 
 
 
     
-    #  def __str__(self):
-    #     return self.id or 'NA'
+    def __str__(self):
+        return self.flight_mission_guid or 'NA'
 
 
-     class Meta:
+    class Meta:
         verbose_name_plural = "Seabee bucket"

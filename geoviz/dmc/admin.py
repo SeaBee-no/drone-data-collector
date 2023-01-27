@@ -37,6 +37,6 @@ admin.site.register(ddc_main,ddc_main_Admin )
 # upload datat.
 class ddc_upload_Admin(ImportExportModelAdmin,SimpleHistoryAdmin):
     #form = user_profilesForm
-    list_display = ('id',)
-    search_fields = ('id',)
+    list_display = ('flight_mission_guid',)
+    search_fields = ('flight_mission_guid',)
 admin.site.register(ddc_upload,ddc_upload_Admin )
