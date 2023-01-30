@@ -24,6 +24,8 @@ from django.utils.safestring import mark_safe
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 
+
+
 class dmcForm(ModelForm):
     datetime_range = fields.DateTimeRangeField(
         input_formats=['%d/%m/%Y (%H:%M)'],
@@ -164,9 +166,12 @@ class ddcForm(forms.Form):
           required=False
             )
     
-    mosaiced_image = forms.FileField(required=False, label='Upload your file1')
-    mosaiced_image2 = forms.FileField(required=False, label='Upload your file2')
-
+    mosaiced_image = forms.FileField(required=False, label='Upload single mosaiced file')
+    row_image = forms.FileField(required=False, label='Upload raw images a single .zip file')
+    ground_control_point = forms.FileField(required=False, label='Upload ground control point as .csv')
+    ground_truth_point = forms.FileField(required=False, label='Upload ground truth point as .csv')
+    dronePath = forms.FileField(required=False, label='Upload drone path file as .kml')
+        
 
     
     def __init__(self, *args, **kwargs):
@@ -177,8 +182,10 @@ class ddcForm(forms.Form):
 
         self.fields['mision_name_list'].choices = [
             (val['Identifier'], val['Flight Name'] + "----" + val['Location']) for val in obj]
+        
+     
 
-        self.helper = FormHelper()
+        self.helper = FormHelper(self)
         self.helper.layout = Layout(
         
             

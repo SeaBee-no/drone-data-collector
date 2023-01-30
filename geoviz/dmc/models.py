@@ -193,25 +193,31 @@ class ddc_upload(models.Model):
 
     flight_mission_guid  = models.CharField(null=True, blank=True, max_length=300,verbose_name='Dronelogbook Id',unique=True)
 
-    mosaiced_image = models.FileField(verbose_name="Object Upload",
+    mosaiced_image = models.FileField(verbose_name="Upload single mosaiced file",
                                        storage=MinioBackend(  
                                            bucket_name='dmc', 
                                        ),
-                                       upload_to=iso_date_prefix, null=False, blank=False)
-    mosaiced_image2 = models.FileField(verbose_name="Object Upload",
+                                       upload_to=iso_date_prefix, null=True, blank=True)
+    row_image = models.FileField(verbose_name="Upload raw images a single .zip file",
                                        storage=MinioBackend(  
                                            bucket_name='dmc',
                                        ),
-                                       upload_to=iso_date_prefix, null=False, blank=False)
-    
-     
-    
-    
-    #  mosaiced_image = models.FileField(null=True, blank=True,
-    #                                   storage=MinioBackend(bucket_name='dmc'),
-    #                                   verbose_name='Upload single mosaiced file',
-    #                                   upload_to=iso_date_prefix)
- 
+                                       upload_to=iso_date_prefix, null=True, blank=True)
+    ground_control_point = models.FileField(verbose_name="Upload ground control point as .csv",
+                                       storage=MinioBackend(  
+                                           bucket_name='dmc',
+                                       ),
+                                       upload_to=iso_date_prefix, null=True, blank=True)
+    ground_truth_point = models.FileField(verbose_name="Upload ground truth point as .csv",
+                                       storage=MinioBackend(  
+                                           bucket_name='dmc',
+                                       ),
+                                       upload_to=iso_date_prefix, null=True, blank=True)
+    dronePath = models.FileField(verbose_name="Upload drone path file as .kml",
+                                       storage=MinioBackend(  
+                                           bucket_name='dmc',
+                                       ),
+                                       upload_to=iso_date_prefix, null=True, blank=True)
      
     history = HistoricalRecords()
 

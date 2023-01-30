@@ -63,6 +63,7 @@ INSTALLED_APPS = [
     "bootstrap_datepicker_plus",
     'django_minio_backend',
 
+
     #'django_minio_backend.apps.DjangoMinioBackendConfig',
     
     'home',

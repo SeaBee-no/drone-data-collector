@@ -272,13 +272,18 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#smartwizard").smartWizard("loader", "show");
 
     flightGUID = $("#id_mision_name_list").find(":selected").val();
+      
+    // tigger to update the dataupload form
+    updateDownloadStepEntries();
 
     $.getJSON(
-      `${window.location.origin}/api/ddcregcheck/${flightGUID}`,
-      (event) => {
+      `${window.location.origin}/api/ddcregcheck/${flightGUID}`, (event) => {
         data = event.data;
+        
         let da_drone_type =
           event.response == "found" && data.drone_type != null ? data : null;
+
+
         da_drone_type != null
           ? $(`input[name='drone_type'][value='${data.drone_type}']`).prop(
               "checked",
@@ -549,6 +554,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+
+
+
+
+
+
+
   // update the form value
   const get_flightdataByGUID = (flight, guid, callback) => {
     $.getJSON(
@@ -604,7 +616,32 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
+
+      
+
+
+
+// ###################   window load finish ##########################
+
+
 });
+
+
+
+$(".UploadIcone").on("click", function (ev) {
+  let idObj = $(ev.currentTarget)
+  .closest("div")
+  .find("input.custom-file-input")[0].id;
+
+  $(`#${idObj}`).click()
+
+
+ 
+});
+
+
+
+
 
 $(".edit-icon, .edit-icon-for-calander").on("click", function (ev) {
   let idObj = $(ev.currentTarget)
@@ -613,6 +650,11 @@ $(".edit-icon, .edit-icon-for-calander").on("click", function (ev) {
   $(`#${idObj}`).attr("disabled", !$(`#${idObj}`).attr("disabled"));
   $(ev.currentTarget).toggleClass("text-secondary");
 });
+
+
+
+
+
 
 $(".edit-icon-for-radio").on("click", function (ev) {
   let idObj = $(ev.currentTarget).closest("div").find(".form-group")[0].id;
@@ -635,10 +677,7 @@ $(".edit-icon-for-radio").on("click", function (ev) {
 $(".progress").hide();
 $("#id_upload_data").click(function() {
   
-  let formData = new FormData();
-  formData.append('mosaiced_image', $('#id_mosaiced_image')[0].files[0] != null? $('#id_mosaiced_image')[0].files[0] :"");
-  formData.append('mosaiced_image2', $('#id_mosaiced_image2')[0].files[0] != null? $('#id_mosaiced_image2')[0].files[0] :"");
-  formData.append('flight_mission_guid', $('#id_flight_mission_guid').val());
+ 
    $(".progress").show();
 
 
@@ -654,7 +693,7 @@ $("#id_upload_data").click(function() {
     type: "POST",
     url: "/api/uploadreg/",
     //enctype: "multipart/form-data",
-    data: formData,
+    data: getupload_FormData(),
     headers: {
       "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
         .value,
@@ -671,7 +710,77 @@ $("#id_upload_data").click(function() {
 });
 
 
+
+
+
 });
+
+
+
+
+const getupload_FormData = ()  =>{
+
+  let formData = new FormData();
+  formData.append('flight_mission_guid', flightGUID);
+  formData.append('mosaiced_image', $('#id_mosaiced_image')[0].files[0] != null? $('#id_mosaiced_image')[0].files[0] :"");
+  formData.append('row_image', $('#id_row_image')[0].files[0] != null? $('#id_row_image')[0].files[0] :"");
+  formData.append('ground_control_point', $('#id_ground_control_point')[0].files[0] != null? $('#id_ground_control_point')[0].files[0] :"");
+  formData.append('ground_truth_point', $('#id_ground_truth_point')[0].files[0] != null? $('#id_ground_truth_point')[0].files[0] :"");
+  formData.append('dronePath', $('#id_dronePath')[0].files[0] != null? $('#id_dronePath')[0].files[0] :"");
+
+  return formData;
+
+}
+
+
+
+// update the upload step entries
+
+const updateDownloadStepEntries = () =>{
+
+
+  $.getJSON(
+    `${window.location.origin}/api/uploadregcheck/${flightGUID}`,
+    function (data) {
+      if (data.response == "not_found") {
+          //reset_download_record();
+      }
+      if (data.response == "found") {
+       
+        update_download_record(data);
+      }
+    }
+  ).fail(function (xhr, status, error) {
+    console.log("Error: " + status + " - " + error);
+  });
+
+
+}
+
+
+const update_download_record = (data) =>{
+
+    let da = Object.entries(data.data).map( ([key,value]) => ({ ["id_"+key]: value } ));
+
+
+  $("#step-5 label.custom-file-label ").each( (index,el)=> {
+    
+   
+    if( $(el).attr("for") in data)
+   
+    $(el).text('okkkk ');
+   /// to be started
+});
+
+
+  
+}
+
+
+
+
+
+
 
 
 /* 

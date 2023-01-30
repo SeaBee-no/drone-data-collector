@@ -376,8 +376,12 @@ class dronelogBook_recordcheck(generics.GenericAPIView):
 
 class uploaddata_serializers(serializers.ModelSerializer):
     
+    ## must be register the  filed in the serializers
     mosaiced_image = serializers.FileField(required=False)
-    mosaiced_image2 = serializers.FileField(required=False)
+    row_image = serializers.FileField(required=False)
+    ground_control_point = serializers.FileField(required=False)
+    ground_truth_point = serializers.FileField(required=False)
+    dronePath = serializers.FileField(required=False)
     
     
     class Meta:
@@ -412,3 +416,15 @@ class uploaddata_update(generics.UpdateAPIView):
         except Exception as e:
             return Response({"error": "Failed to update data. Error: {}".format(str(e))}, status=status.HTTP_400_BAD_REQUEST)
         return Response({"success": "Data has been successfully updated."}, status=status.HTTP_200_OK)
+
+
+class uploadData_recordcheck(generics.GenericAPIView):
+    queryset = ddc_upload.objects.all()
+    serializer_class = uploaddata_serializers
+
+    def get(self, request, guid):
+        instance = ddc_upload.objects.filter(flight_mission_guid=guid)
+        if not instance:
+            return Response({"response": "not_found"}, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(instance[0])
+        return Response({"response": "found",'data':serializer.data}, status=status.HTTP_200_OK)

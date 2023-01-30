@@ -1,9 +1,8 @@
 from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
-from django.urls import path, include, re_path
+from django.urls import path, include
 from . import settings
 from .views import *
-
 from .views import StaticViewSitemap
 
 sitemaps = {
@@ -17,7 +16,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'', include('dmc.urls')),
     path(r'', include('home.urls')),
-
     path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 ]
 

@@ -13,8 +13,12 @@
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-file-upload/4.0.11/uploadfile.min.css" integrity="sha512-MudWpfaBG6v3qaF+T8kMjKJ1Qg8ZMzoPsT5yWujVfvIgYo2xgT1CvZq+r3Ks2kiUKcpo6/EUMyIUhb3ay9lG7A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+
+
 <link href="https://cdn.jsdelivr.net/npm/smartwizard@5/dist/css/smart_wizard_all.min.css" rel="stylesheet"
       type="text/css"/>
+
+
 <style>
 
   .pushTheBottom {
@@ -60,6 +64,41 @@ background-color:transparent;
 border: 0px solid #495057;
 border-radius: 0px;
 } 
+
+
+
+
+.UploadIcone{
+    position: absolute;
+    right: -30px;
+    top: 60%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    /*color: gray;*/
+}
+
+.DownloadIcone{
+    position: absolute;
+    right: -70px;
+    top: 60%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    /*color: gray;*/
+}
+
+
+.TrashIcone{
+    position: absolute;
+    right: -100px;
+    top: 60%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    /*color: gray;*/
+}
+
+
+
+
 </style>
 
 
@@ -284,34 +323,69 @@ border-radius: 0px;
                        
                         <div class="form-row">
                             
-                            <div class="form-group col-md-8 mb-0">
-                                {{ form.flight_mission_guid | as_crispy_field   }}
-                            </div>
+                         
 
                             <div class="form-group col-md-8 mb-0">
                                 {{ form.mosaiced_image | as_crispy_field   }}
+                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
+                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
+                               
+                           
                             </div>
 
 
                             <div class="form-group col-md-8 mb-0">
-                                {{ form.mosaiced_image2 | as_crispy_field   }}
+                                {{ form.row_image | as_crispy_field   }}
+                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
+                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
+                              
+                            </div>
+
+
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.ground_control_point | as_crispy_field   }}
+                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
+                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
+                              
+                            </div>
+
+
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.ground_truth_point | as_crispy_field   }}
+                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
+                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
+                              
+                            </div>
+
+
+
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.dronePath | as_crispy_field   }}
+                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
+                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
+                              
                             </div>
 
 
                             <div class="form-group col-md-12 mb-0 mx-auto text-center pt-5">
-                                <button id="id_upload_data" type="button" class="btn btn-success rounded-pill"> Upload</button>
-                                <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                                  </div>
+                               
+                                <div class="progress m-5">
+                                    <div class="progress-bar progress-bar-striped bg-success progress-bar-animated" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                
+                                </div>
+
+                                  <button id="id_upload_data" type="button" class="btn btn-success rounded-pill"> Upload</button>
 
                             </div>
                
 
                      
-                          
                         </div>
-
-
 
 
 
@@ -319,7 +393,7 @@ border-radius: 0px;
 
                     <div class="tab-pane alert alert-primary" id="step-6" role="tabpanel">
 
-                      
+                        
                     </div>
 
 
@@ -344,6 +418,7 @@ border-radius: 0px;
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-file-upload/4.0.11/jquery.uploadfile.min.js" integrity="sha512-uwNlWrX8+f31dKuSezJIHdwlROJWNkP6URRf+FSWkxSgrGRuiAreWzJLA2IpyRH9lN2H67IP5H4CxBcAshYGNw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 
 <script src="{% static 'dmc/js/ddcEntryForm.js' %}"></script>
 
