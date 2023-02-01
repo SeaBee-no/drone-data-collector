@@ -269,7 +269,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // force to mutiselect to single
   $("#id_mision_name_list").on("click", "option", function (event) {
+   
+   
     $("#smartwizard").smartWizard("loader", "show");
+
+
+  
 
     flightGUID = $("#id_mision_name_list").find(":selected").val();
       
@@ -344,22 +349,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#id_cdom").val(
           event.response == "found" && data.cdom != null ? data.cdom : null
         );
-        // map the value from the droneextra para to form
-        //$('input[name="drone_type"]:checked').val()
-        ///////// to be fix***************************
-        //( da != null ? data.dat : null ? $(`input[name='drone_type'][value='${da.drone_type}']`).prop("checked", true) : $(`input[name='${da.drone_type}']`).prop("checked", false));
-
-        // flight_mission_guid: flightGUID,
-        // flight_mission_name: $("#id_mision_name").val(),
-        // image_overlap: $("#id_image_overlap").val(),
-        // sensor_dates_last_calibration: $("#id_sensor_info_dates_last_calibration").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
-        // sensor_dates_last_maintenance: $("#id_sensor_info_dates_last_maintenance").val().replace(/(\d{2})\/(\d{2})\/(\d{4})/, "$3-$1-$2"),
-        // secchi_depth: $("#id_secchi_depth").val(),
-        // turbidity: $("#id_turbidity").val(),
-        // salinity: $("#id_salinity").val(),
-        // water_temperature: $("#id_water_temperature").val(),
-        // cdom: $("#id_cdom").val(),
-        // csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        
 
         // clear the previous layers from group layer
         gp_layer_projArea.clearLayers();
@@ -517,6 +507,10 @@ document.addEventListener("DOMContentLoaded", function () {
               });
             });
 
+
+
+
+            
             //********************** /
             get_flightdataByGUID(
               "place",
@@ -606,19 +600,77 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
 
-  // will exicute once when page is loded fully
-  let guid = new URLSearchParams(location.search).get("guid");
-  if (guid) {
-    $("#smartwizard").smartWizard("loader", "show");
-    $(`#id_mision_name_list option[value='${guid}']`)
-      .prop("selected", true)
-      .click();
+// will exicute once when page is loded fully
+let guid = new URLSearchParams(location.search).get("guid");
+
+onloadMissionListClick(guid);
+
+
+// click on download 
+$('.DownloadIcone').click( (el) => {
+
+  let val = $(el.currentTarget).attr("data-url");
+  val.length > 0 ? window.open(val):null;
+
+});
+      
+// click to del
+$('.TrashIcone').click((el) => {
+ 
+  let modelFiledName = $(el.currentTarget).attr("model_field");
+  let urldata = $(el.currentTarget).prev().attr("data-url");
+
+  if(urldata != null && urldata.length > 0 ) {
+
+    
+    $.confirm({
+      title:
+        '<span class="text-danger"><b>Warnning!</b></span>',
+      content:
+        '<span class="text-dark">"Are you sure you want to delete this data? <br/>This action cannot be undone.</span>',
+      type: "red",
+      typeAnimated: true,
+      buttons: {
+        confirm: {
+          text: " ok ",
+          btnClass: "btn-red",
+          action: function () {
+
+            del_upload_file(modelFiledName);
+            
+            $(el.currentTarget).prev().attr("data-url","");
+            
+            $(`#id_${modelFiledName}`).val(null);
+            
+            $($(`#id_${modelFiledName}`).next("label")[0]).text("---")
+
+
+          },
+        },
+        cancel: {
+
+          text: "Cancel",
+          btnClass: "btn-green",
+          action : function () {
+           // do something
+        },
+
+        }
+      },
+    });
+    
+  
+  
+
+  
+  
+  
+  
+  
+  
   }
 
-
-
-      
-
+})
 
 
 // ###################   window load finish ##########################
@@ -627,7 +679,18 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
+// tigger the form based on mission id
+const onloadMissionListClick = (val) =>{
+  if (val) {
+     $("#smartwizard").smartWizard("loader", "show");
+     $(`#id_mision_name_list option[value='${val}']`)
+       .prop("selected", true)
+       .click();
+   }
+   }
 
+
+   
 $(".UploadIcone").on("click", function (ev) {
   let idObj = $(ev.currentTarget)
   .closest("div")
@@ -677,10 +740,30 @@ $(".edit-icon-for-radio").on("click", function (ev) {
 $(".progress").hide();
 $("#id_upload_data").click(function() {
   
- 
+ if(flightGUID.length > 0){
+
    $(".progress").show();
 
+   $.getJSON(
+    `${window.location.origin}/api/uploadregcheck/${flightGUID}`,
+    function (data) {
+      if (data.response == "not_found") {
+        
+        let val =  "/api/uploadreg/";
+        uploadDataToMinio(val,"POST");
 
+      }
+      if (data.response == "found") {
+       
+      let val =  `/api/uploadreg/${flightGUID}/`;
+        uploadDataToMinio(val,"PUT");
+      }
+    }
+  ).fail(function (xhr, status, error) {
+    console.log("Error: " + status + " - " + error);
+  });
+
+const uploadDataToMinio = (valUrl,regType) => {
   $.ajax({
     xhr: function() {
       var xhr = new XMLHttpRequest();
@@ -690,9 +773,10 @@ $("#id_upload_data").click(function() {
       };
       return xhr;
     },
-    type: "POST",
-    url: "/api/uploadreg/",
-    //enctype: "multipart/form-data",
+    type: regType,
+    contentType: "application/json",
+    url:   valUrl ,
+    enctype: "multipart/form-data",
     data: getupload_FormData(),
     headers: {
       "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
@@ -701,7 +785,29 @@ $("#id_upload_data").click(function() {
     contentType: false,
     processData: false,
     success: function(data) {
-        console.log("Success!");
+        
+     
+      $.confirm({
+        title: '<span class="text-success"><b>successful!</b></span>',
+        content:
+          '<span class="text-dark">Data has been uploded successfully</span>',
+        type: "green",
+        typeAnimated: true,
+        buttons: {
+          tryAgain: {
+            text: "Close",
+            btnClass: "btn-green",
+            action: function () {},
+          },
+        },
+      });
+
+
+
+
+
+        onloadMissionListClick(flightGUID);
+
         $(".progress").fadeOut();
     },
     error: function(error) {
@@ -709,11 +815,36 @@ $("#id_upload_data").click(function() {
     }
 });
 
+}
 
-
-
+}
 
 });
+
+
+const del_upload_file = (dronePath) =>{
+
+  $.ajax({
+    url: `/api/uploadregdel/${flightGUID}/`,
+    type: "DELETE",
+    data: {
+        "field_to_delete": dronePath
+    },
+    headers: {
+      "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
+        .value,
+    },
+    success: function(data) {
+        console.log("Data has been successfully deleted:", data);
+    },
+    error: function(error) {
+        console.error("Error deleting data:", error);
+    }
+});
+}
+
+
+
 
 
 
@@ -743,11 +874,14 @@ const updateDownloadStepEntries = () =>{
     `${window.location.origin}/api/uploadregcheck/${flightGUID}`,
     function (data) {
       if (data.response == "not_found") {
-          //reset_download_record();
+        update_download_record_notFound();
       }
       if (data.response == "found") {
-       
-        update_download_record(data);
+        
+        // reset data before update
+       // update_download_record_notFound();
+
+        update_download_record_found(data);
       }
     }
   ).fail(function (xhr, status, error) {
@@ -757,18 +891,65 @@ const updateDownloadStepEntries = () =>{
 
 }
 
+//reset all the donwload filed
+const update_download_record_notFound = () =>{
 
-const update_download_record = (data) =>{
+  $('#step-5 :input[type="file"]').each( (index,el)=> {
+
+    $(el).val(null);
+
+  });
+
+  $('#step-5 .DownloadIcone' ).each( (index,el)=> {
+
+    $(el).attr("data-url",'');
+   
+
+  });
+
+
+  $('#step-5  .TrashIcone' ).each( (index,el)=> {
+
+    $(el).attr("model_field",'');
+
+  });
+
+
+  $('#step-5  .custom-file-label' ).each( (index,el)=> {
+
+   // $(el).attr("for",'');
+    $(el).text('---');
+
+  });
+
+
+}
+
+
+
+
+//update form  download form  if entries found
+const update_download_record_found = (data) =>{
 
     let da = Object.entries(data.data).map( ([key,value]) => ({ ["id_"+key]: value } ));
 
 
   $("#step-5 label.custom-file-label ").each( (index,el)=> {
     
+    let valFor = $(el).attr("for");
+    let dakey = Object.keys(da.find(object => object.hasOwnProperty(valFor)))[0];
+    let daval= Object.values(da.find(object => object.hasOwnProperty(valFor)))[0];
+
+    if((daval != null) && (valFor  == dakey)){
+
+      $(el).text(daval.split("/").pop());
+      $(`#div_${valFor}`).parent("div").children("span").children(".DownloadIcone").attr("data-url",daval);
+      $(`#div_${valFor}`).parent("div").children("span").children(".TrashIcone").attr("model_field",valFor.split("id_").pop());
+
+    }
    
-    if( $(el).attr("for") in data)
    
-    $(el).text('okkkk ');
+
    /// to be started
 });
 
@@ -783,34 +964,3 @@ const update_download_record = (data) =>{
 
 
 
-/* 
-$.ajax({
-  xhr: function() {
-      var xhr = new window.XMLHttpRequest();
-      xhr.upload.addEventListener("progress", function(evt) {
-          if (evt.lengthComputable) {
-              var percentComplete = evt.loaded / evt.total;
-              percentComplete = parseInt(percentComplete * 100);
-              $("#progressbar").width(percentComplete+'%');
-              $("#progressbar").html(percentComplete+'%');
-          }
-      }, false);
-      return xhr;
-  },
-  type: "POST",
-  url: "/api/uploadreg/",
-  //enctype: "multipart/form-data",
-  data: formData,
-  headers: {
-    "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
-      .value,
-  },
-  contentType: false,
-  processData: false,
-  success: function(data) {
-      console.log("Success!");
-  },
-  error: function(error) {
-      console.log("Error:", error);
-  }
-}); */

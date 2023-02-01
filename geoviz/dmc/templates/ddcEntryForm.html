@@ -96,6 +96,11 @@ border-radius: 0px;
     /*color: gray;*/
 }
 
+.DownloadIcone:hover, .TrashIcone:hover, .UploadIcone:hover {
+
+    transform: scale(1.2); 
+}
+
 
 
 
@@ -327,48 +332,54 @@ border-radius: 0px;
 
                             <div class="form-group col-md-8 mb-0">
                                 {{ form.mosaiced_image | as_crispy_field   }}
-                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
-                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
-                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
-                               
+                                <span>
+                                    <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                    <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url="" ></i>
+                                    <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                                </span>
                            
                             </div>
 
 
                             <div class="form-group col-md-8 mb-0">
                                 {{ form.row_image | as_crispy_field   }}
-                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
-                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
-                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
-                              
+                                <span>
+                                    <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                    <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url="" ></i>
+                                    <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                                </span>
                             </div>
 
 
                             <div class="form-group col-md-8 mb-0">
                                 {{ form.ground_control_point | as_crispy_field   }}
+                            <span>
                                 <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
-                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
-                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
+                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url=""  ></i>
+                                <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                            </span>
                               
                             </div>
 
 
                             <div class="form-group col-md-8 mb-0">
                                 {{ form.ground_truth_point | as_crispy_field   }}
-                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
-                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
-                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
-                              
+                                <span>
+                                    <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                    <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url=""></i>
+                                    <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                                </span>
                             </div>
 
 
 
                             <div class="form-group col-md-8 mb-0">
                                 {{ form.dronePath | as_crispy_field   }}
-                                <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
-                                <i class="fa fa-cloud-download fa-xl DownloadIcone text-success"></i>
-                                <i class="fa fa-trash fa-xl TrashIcone text-danger"></i>
-                              
+                                <span>
+                                    <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                    <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url="" ></i>
+                                    <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                                </span>
                             </div>
 
 

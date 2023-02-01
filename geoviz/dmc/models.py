@@ -181,12 +181,12 @@ class ddc_upload(models.Model):
   
      
 
-    def delete(self, *args, **kwargs):
-        """
-        Delete must be overridden because the inherited delete method does not call `self.file.delete()`.
-        """
-        self.mosaiced_image.delete()
-        super(ddc_upload, self).delete(*args, **kwargs)
+    # def delete(self, *args, **kwargs):
+    #     """
+    #     Delete must be overridden because the inherited delete method does not call `self.file.delete()`.
+    #     """
+    #     self.mosaiced_image.delete()
+    #     super(ddc_upload, self).delete(*args, **kwargs)
 
 
  

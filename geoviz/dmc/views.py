@@ -418,6 +418,27 @@ class uploaddata_update(generics.UpdateAPIView):
         return Response({"success": "Data has been successfully updated."}, status=status.HTTP_200_OK)
 
 
+class uploaddata_delete(generics.DestroyAPIView):
+    
+    queryset = ddc_upload.objects.all()
+    serializer_class = uploaddata_serializers
+    lookup_field = 'flight_mission_guid'
+
+    def perform_destroy(self, instance):
+        file_field = self.request.data.get('field_to_delete', None)
+        if file_field:
+            file = getattr(instance, file_field, None)
+            if file:
+                try:
+                    file.delete(save=True)
+                    instance.save()
+                    return Response({"success": "Field has been successfully deleted."}, status=status.HTTP_204_NO_CONTENT)
+                except Exception as e:
+                    return Response({"error": f"Failed to delete field: {e}"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Field not specified."}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class uploadData_recordcheck(generics.GenericAPIView):
     queryset = ddc_upload.objects.all()
     serializer_class = uploaddata_serializers
