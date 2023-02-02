@@ -267,6 +267,11 @@ def get_data_dlb_byguid(opration, guid):
             "ApiKey": os.environ['dronelogbooka_pikey'],
              "DlbUrl": os.environ['dronelogbook_dlburl'],
             })
+        # data = requests.get(f'https://api.dronelogbook.com/flight/DAE11F89-9DD6-D581-95B8-A4FF1FF1638E', 
+        #     headers={
+        #     "ApiKey": 'ak_f596ec84-c0d9-ea1e-46ab-77332e8fa36ehh',
+        #     # "DlbUrl": 'www.dronelogbook.com',
+        #     })
 
         return data
 
@@ -449,3 +454,50 @@ class uploadData_recordcheck(generics.GenericAPIView):
             return Response({"response": "not_found"}, status=status.HTTP_200_OK)
         serializer = self.get_serializer(instance[0])
         return Response({"response": "found",'data':serializer.data}, status=status.HTTP_200_OK)
+
+
+## to be tested 
+def geonode_layer_update():
+    try:
+      
+        geo = Geoserver( 'https://geonode.seabee.sigma2.no/geoserver',   username=user,   password=passw)
+        geo.create_coveragestore(layer_name=file_path.name, path=file_path, workspace='geonode')
+     
+        
+        credentials = "-----".encode('utf-8')
+
+        encoded_credentials = base64.b64encode(credentials).decode('utf-8')
+
+        url = "https://geonode.seabee.sigma2.no/api/v2/management/commands/"
+        
+        # headers = {
+      
+        #     "Authorization": f"Basic {encoded_credentials}"
+        #     }
+      
+        # response = requests.get(url, headers=headers)
+        # print(response.text)
+
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Basic {encoded_credentials}"     
+                        }
+        # Define command and parameters
+        command = "updatelayers"
+        kwargs = {
+          'filter':'test_del.tif',
+          'store':'test_del.tif',
+          'workspace':'geonode'
+        }
+
+        response = requests.post(url, headers=headers, data=json.dumps({"command": command, "kwargs": kwargs}))
+
+        # Check response
+        if response.status_code == 201:
+            print("Command successfully added.")
+        else:
+            print("Failed to add command.")
+           
+    
+    except Exception as e:
+        print (e)
