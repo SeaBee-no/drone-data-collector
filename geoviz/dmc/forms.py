@@ -26,33 +26,33 @@ from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
 
 
-class dmcForm(ModelForm):
-    datetime_range = fields.DateTimeRangeField(
-        input_formats=['%d/%m/%Y (%H:%M)'],
-        widget=widgets.DateTimeRangeWidget(format='%d/%m/%Y (%H:%M)',
-                                           picker_options={
-                                               'timePicker24Hour': True,
+# class dmcForm(ModelForm):
+#     datetime_range = fields.DateTimeRangeField(
+#         input_formats=['%d/%m/%Y (%H:%M)'],
+#         widget=widgets.DateTimeRangeWidget(format='%d/%m/%Y (%H:%M)',
+#                                            picker_options={
+#                                                'timePicker24Hour': True,
 
-                                           }),
+#                                            }),
 
-    )
+#     )
 
-    class Meta:
-        model = dmc_main
-        fields = '__all__'
-        exclude = ()
-        widgets = {
-            'takeoff_landing_coordinates': LeafletWidget(),
-        }
+#     class Meta:
+#         model = dmc_main
+#         fields = '__all__'
+#         exclude = ()
+#         widgets = {
+#             'takeoff_landing_coordinates': LeafletWidget(),
+#         }
 
-    def __init__(self, *args, **kwargs):
+    # def __init__(self, *args, **kwargs):
 
-        super(dmcForm, self).__init__(*args, **kwargs)
+    #     super(dmcForm, self).__init__(*args, **kwargs)
 
-        self.fields["dron_info"].widget = CheckboxSelectMultiple()
-        self.fields["dron_info"].queryset = drone_info_list.objects.all()
-        self.fields["sensor_info"].widget = CheckboxSelectMultiple()
-        self.fields["sensor_info"].queryset = sensor_info_list.objects.all()
+    #     self.fields["dron_info"].widget = CheckboxSelectMultiple()
+    #     self.fields["dron_info"].queryset = drone_info_list.objects.all()
+    #     self.fields["sensor_info"].widget = CheckboxSelectMultiple()
+    #     self.fields["sensor_info"].queryset = sensor_info_list.objects.all()
 
 
 class ddcForm(forms.Form):
