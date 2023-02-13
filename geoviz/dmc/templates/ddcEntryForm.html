@@ -58,6 +58,12 @@
      z-index: 99;
 }
 
+
+
+
+
+
+
 #div_id_sensor_info_dates_last_calibration .input-group-text, #div_id_sensor_info_dates_last_maintenance  .input-group-text {
 
 background-color:transparent;
@@ -96,7 +102,19 @@ border-radius: 0px;
     /*color: gray;*/
 }
 
-.DownloadIcone:hover, .TrashIcone:hover, .UploadIcone:hover {
+
+
+.GeonodeIcone{
+    position: absolute;
+    right: -140px;
+    top: 60%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    /*color: gray;*/
+}
+
+
+.DownloadIcone:hover, .TrashIcone:hover, .UploadIcone:hover, .GeonodeIcone:hover {
 
     transform: scale(1.2); 
 }
@@ -336,6 +354,7 @@ border-radius: 0px;
                                     <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
                                     <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url="" ></i>
                                     <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                                    <i class="fa fa-map  fa-xl GeonodeIcone text-info"></i>
                                 </span>
                            
                             </div>

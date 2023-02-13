@@ -22,7 +22,7 @@ from django.shortcuts import render
 
 from django.conf import settings as conf_settings
 from pathlib import Path
-import os
+import os, base64
 #from rest_framework import generics
 
 from rest_framework.permissions import IsAuthenticated
@@ -32,6 +32,12 @@ from django.contrib import messages
 from rest_framework import  generics
 
 from django.views.decorators.csrf import csrf_exempt
+from geo.Geoserver import Geoserver
+
+from minio import Minio
+from datetime import  timedelta
+import urllib
+jsonPath=Path.joinpath(conf_settings.BASE_DIR, 'dmc','tempfolder')
 
 #from rest_framework.permissions import IsAuthenticated 
 
@@ -209,7 +215,7 @@ class sensor_info_list_SnippetList(viewsets.ModelViewSet):
     # def destroy(self, request, pk=None):
     #     return Response({'http_method': 'DEL'})
 
-jsonPath=Path.joinpath(conf_settings.BASE_DIR, 'dmc','dronelogbook')
+
 
 class get_dronelogbook_flight_data_coustom_form (APIView):
     def get(self, request, format=None):
@@ -456,48 +462,119 @@ class uploadData_recordcheck(generics.GenericAPIView):
         return Response({"response": "found",'data':serializer.data}, status=status.HTTP_200_OK)
 
 
-## to be tested 
-def geonode_layer_update():
-    try:
-      
-        geo = Geoserver( 'https://geonode.seabee.sigma2.no/geoserver',   username=user,   password=passw)
-        geo.create_coveragestore(layer_name=file_path.name, path=file_path, workspace='geonode')
-     
+
+
+class get_download_url(generics.GenericAPIView):
         
-        credentials = "-----".encode('utf-8')
+        def get(self, request, fileWithPath ):
+            try:
+                minioClient = Minio(
+                           "storage.seabee.sigma2.no",
+                        access_key=os.getenv('MINIO_ACCESS_KEY'),
+                        secret_key=os.getenv('MINIO_SECRET_KEY'),
+                        )
+                #found = minioClient.bucket_exists("dmc")
+                fileWithPath = fileWithPath.replace("£¤", "/")
+                file_url = minioClient.presigned_get_object("dmc", f"{fileWithPath}", expires=timedelta(hours=1))
 
-        encoded_credentials = base64.b64encode(credentials).decode('utf-8')
+                return Response(file_url)
+                
+            except Exception as e:
+                print(e, flush=True)
+                return Response('something wrong')
 
-        url = "https://geonode.seabee.sigma2.no/api/v2/management/commands/"
-        
-        # headers = {
-      
-        #     "Authorization": f"Basic {encoded_credentials}"
-        #     }
-      
-        # response = requests.get(url, headers=headers)
-        # print(response.text)
 
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Basic {encoded_credentials}"     
-                        }
-        # Define command and parameters
-        command = "updatelayers"
-        kwargs = {
-          'filter':'test_del.tif',
-          'store':'test_del.tif',
-          'workspace':'geonode'
-        }
 
-        response = requests.post(url, headers=headers, data=json.dumps({"command": command, "kwargs": kwargs}))
 
-        # Check response
-        if response.status_code == 201:
-            print("Command successfully added.")
-        else:
-            print("Failed to add command.")
-           
+
+
+class publish_to_geonode(APIView):
+    def get(self, request, format=None, filelocation=None ):
+        try:
+
+            http_request = request._request
+            download_url_view = get_download_url.as_view()
+            response = download_url_view(http_request, fileWithPath=filelocation)
+            response_url = response.data
     
-    except Exception as e:
-        print (e)
+            file_name = Path(response_url.split("?")[0]).name
+            file_stem = Path(response_url.split("?")[0]).stem
+            file_extension = Path(response_url.split("?")[0]).suffix
+
+            counter = 1
+            while Path(jsonPath / file_name).exists():
+                file_name = f"{file_stem}_{counter}.{file_extension}"
+                counter += 1
+            
+            file_path_with_name = jsonPath / file_name
+
+            urllib.request.urlretrieve(response_url, file_path_with_name)
+
+            
+            print(f"The file has been saved to:{file_path_with_name}")
+            
+            geo = Geoserver( 'https://geonode.seabee.sigma2.no/geoserver',   username=os.getenv('geoserver_user'),   password=os.getenv('geosever_pass'))
+            geo.create_coveragestore(layer_name=file_stem, path=file_path_with_name, workspace='geonode')
+
+            
+            
+            credentials = f"{os.getenv('geondoe_user')}:{os.getenv('geonode_pass')}".encode('utf-8')
+
+            encoded_credentials = base64.b64encode(credentials).decode('utf-8')
+
+            geonode_upload_tigger = "https://geonode.seabee.sigma2.no/api/v2/management/commands/"
+            
+
+
+            headers = {
+                "Content-Type": "application/json",
+                "Authorization": f"Basic {encoded_credentials}"     
+                            }
+            # Define command and parameters
+            command = "updatelayers"
+            kwargs = {
+            'filter': file_stem,
+            'store': file_stem,
+            'workspace':'geonode'
+            }
+
+            response = requests.post(geonode_upload_tigger, headers=headers, data=json.dumps({"command": command, "kwargs": kwargs}))
+            
+            job_id= response.json()['data']['id']
+
+            #delete the temp file once uploded
+            file_path_with_name.unlink()
+
+            return Response({'jobid':job_id})
+
+
+        except Exception as e:
+            print(e, flush=True)
+            return Response('something wrong')
+
+class check_active_geonode_job(APIView):
+        def get(self, request, format=None, jobid=None ):
+            try:
+                
+                credentials = f"{os.getenv('geondoe_user')}:{os.getenv('geonode_pass')}".encode('utf-8')
+
+                encoded_credentials = base64.b64encode(credentials).decode('utf-8')
+
+                geonode_upload_tigger = f"https://geonode.seabee.sigma2.no/api/v2/management/jobs/{jobid}/status/"
+                
+                headers = {
+                    "Content-Type": "application/json",
+                    "Authorization": f"Basic {encoded_credentials}"
+                    } 
+                response = requests.get(geonode_upload_tigger, headers=headers)
+                
+                if(response.status_code != 200):
+                    return Response({'status':'NA'})
+                
+                return Response({'status':response.json()['status']})
+
+                     
+                                    
+            except Exception as e:
+                print(e, flush=True)
+                return Response('something wrong')

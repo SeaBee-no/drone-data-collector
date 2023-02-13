@@ -269,25 +269,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // force to mutiselect to single
   $("#id_mision_name_list").on("click", "option", function (event) {
-   
-   
     $("#smartwizard").smartWizard("loader", "show");
 
-
-  
-
     flightGUID = $("#id_mision_name_list").find(":selected").val();
-      
+
     // tigger to update the dataupload form
     updateDownloadStepEntries();
 
     $.getJSON(
-      `${window.location.origin}/api/ddcregcheck/${flightGUID}`, (event) => {
+      `${window.location.origin}/api/ddcregcheck/${flightGUID}`,
+      (event) => {
         data = event.data;
-        
+
         let da_drone_type =
           event.response == "found" && data.drone_type != null ? data : null;
-
 
         da_drone_type != null
           ? $(`input[name='drone_type'][value='${data.drone_type}']`).prop(
@@ -349,7 +344,6 @@ document.addEventListener("DOMContentLoaded", function () {
         $("#id_cdom").val(
           event.response == "found" && data.cdom != null ? data.cdom : null
         );
-        
 
         // clear the previous layers from group layer
         gp_layer_projArea.clearLayers();
@@ -507,10 +501,6 @@ document.addEventListener("DOMContentLoaded", function () {
               });
             });
 
-
-
-
-            
             //********************** /
             get_flightdataByGUID(
               "place",
@@ -547,13 +537,6 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("Error: " + status + " - " + error);
     });
   });
-
-
-
-
-
-
-
 
   // update the form value
   const get_flightdataByGUID = (flight, guid, callback) => {
@@ -599,112 +582,149 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#id_sensor_info_dates_last_maintenance").attr("disabled", true);
   });
 
+  // will exicute once when page is loded fully
+  let guid = new URLSearchParams(location.search).get("guid");
 
-// will exicute once when page is loded fully
-let guid = new URLSearchParams(location.search).get("guid");
+  onloadMissionListClick(guid);
 
-onloadMissionListClick(guid);
+  // click on download
+  $(".DownloadIcone").click((el) => {
+    let val = $(el.currentTarget).attr("data-url");
+    val = val.split("?")[0].split("dmc/")[1].replace("/", "£¤");
 
+    //val.length > 0 ? window.open(val):null;
 
-// click on download 
-$('.DownloadIcone').click( (el) => {
+    $.getJSON(
+      `${window.location.origin}/api/miniodownload/${val}`,
+      function (data) {
+        data.length > 0 ? window.open(data) : null;
+      }
+    ).fail(function (xhr, status, error) {
+      console.log("Error: " + status + " - " + error);
+    });
+  });
 
-  let val = $(el.currentTarget).attr("data-url");
-  val.length > 0 ? window.open(val):null;
+  // click to del
+  $(".TrashIcone").click((el) => {
+    let modelFiledName = $(el.currentTarget).attr("model_field");
+    let urldata = $(el.currentTarget).prev().attr("data-url");
 
-});
-      
-// click to del
-$('.TrashIcone').click((el) => {
- 
-  let modelFiledName = $(el.currentTarget).attr("model_field");
-  let urldata = $(el.currentTarget).prev().attr("data-url");
+    if (urldata != null && urldata.length > 0) {
+      $.confirm({
+        title: '<span class="text-danger"><b>Warnning!</b></span>',
+        content:
+          '<span class="text-dark">"Are you sure you want to delete this data? <br/>This action cannot be undone.</span>',
+        type: "red",
+        typeAnimated: true,
+        buttons: {
+          confirm: {
+            text: " ok ",
+            btnClass: "btn-red",
+            action: function () {
+              del_upload_file(modelFiledName);
 
-  if(urldata != null && urldata.length > 0 ) {
+              $(el.currentTarget).prev().attr("data-url", "");
 
-    
+              $(`#id_${modelFiledName}`).val(null);
+
+              $($(`#id_${modelFiledName}`).next("label")[0]).text("---");
+            },
+          },
+          cancel: {
+            text: "Cancel",
+            btnClass: "btn-green",
+            action: function () {
+              // do something
+            },
+          },
+        },
+      });
+    }
+  });
+
+  // uplish to geonode
+  $(".GeonodeIcone").click((el) => {
+    let val = $(el.currentTarget)
+      .parents("span")
+      .find(".DownloadIcone")
+      .first()
+      .attr("data-url");
+    val = val.split("?")[0].split("dmc/")[1].replace("/", "£¤");
+
+    $(".GeonodeIcone").toggleClass("fa-map");
+    $(".GeonodeIcone").toggleClass("fa-sync fa-spin");
+
     $.confirm({
-      title:
-        '<span class="text-danger"><b>Warnning!</b></span>',
+      title: '<span class="text-info"><b>Publish map!</b></span>',
       content:
-        '<span class="text-dark">"Are you sure you want to delete this data? <br/>This action cannot be undone.</span>',
-      type: "red",
+        '<span class="text-dark">"Are you sure you want to publish this raster? <br/>This might take a few sec to a few minutes depending on the size of the data.</span>',
+      type: "blue",
       typeAnimated: true,
       buttons: {
         confirm: {
           text: " ok ",
-          btnClass: "btn-red",
+          btnClass: "btn-green",
           action: function () {
-
-            del_upload_file(modelFiledName);
-            
-            $(el.currentTarget).prev().attr("data-url","");
-            
-            $(`#id_${modelFiledName}`).val(null);
-            
-            $($(`#id_${modelFiledName}`).next("label")[0]).text("---")
-
-
+            $.getJSON(
+              `${window.location.origin}/api/geonodepublish/${val}`,
+              function (data) {
+                getJobStatus(data);
+              }
+            ).fail(function (xhr, status, error) {
+              console.log("Error: " + status + " - " + error);
+            });
           },
         },
         cancel: {
-
           text: "Cancel",
-          btnClass: "btn-green",
-          action : function () {
-           // do something
+          btnClass: "btn-red",
+          action: function () {
+            $(".GeonodeIcone").toggleClass("fa-map");
+            $(".GeonodeIcone").toggleClass("fa-sync fa-spin");
+          },
         },
-
-        }
       },
     });
-    
-  
-  
+  });
 
-  
-  
-  
-  
-  
-  
-  }
+  const getJobStatus = (el) => {
+    let intervalID = setInterval(function () {
+      // Your code to run every second
+      $.getJSON(
+        `${window.location.origin}/api/jobstatus/${el.jobid}`,
+        function (data) {
+          if (data.status == "FINISHED") {
+            clearInterval(intervalID);
+            $(".GeonodeIcone").toggleClass("fa-map");
+            $(".GeonodeIcone").toggleClass("fa-sync fa-spin");
+          }
+        }
+      ).fail(function (xhr, status, error) {
+        console.log("Error: " + status + " - " + error);
+      });
+    }, 4000);
+  };
 
-})
-
-
-// ###################   window load finish ##########################
-
-
+  // ###################   window load finish ##########################
 });
-
 
 // tigger the form based on mission id
-const onloadMissionListClick = (val) =>{
+const onloadMissionListClick = (val) => {
   if (val) {
-     $("#smartwizard").smartWizard("loader", "show");
-     $(`#id_mision_name_list option[value='${val}']`)
-       .prop("selected", true)
-       .click();
-   }
-   }
+    $("#smartwizard").smartWizard("loader", "show");
+    $(`#id_mision_name_list option[value='${val}']`)
+      .prop("selected", true)
+      .click();
+  }
+};
 
-
-   
 $(".UploadIcone").on("click", function (ev) {
   let idObj = $(ev.currentTarget)
-  .closest("div")
-  .find("input.custom-file-input")[0].id;
+    .closest("div")
+    .find("input.custom-file-input")[0].id;
 
-  $(`#${idObj}`).click()
-
-
- 
+  $(`#${idObj}`).click();
 });
-
-
-
-
 
 $(".edit-icon, .edit-icon-for-calander").on("click", function (ev) {
   let idObj = $(ev.currentTarget)
@@ -713,11 +733,6 @@ $(".edit-icon, .edit-icon-for-calander").on("click", function (ev) {
   $(`#${idObj}`).attr("disabled", !$(`#${idObj}`).attr("disabled"));
   $(ev.currentTarget).toggleClass("text-secondary");
 });
-
-
-
-
-
 
 $(".edit-icon-for-radio").on("click", function (ev) {
   let idObj = $(ev.currentTarget).closest("div").find(".form-group")[0].id;
@@ -734,142 +749,134 @@ $(".edit-icon-for-radio").on("click", function (ev) {
     );
 });
 
-
-
 // upload data to minio
 $(".progress").hide();
-$("#id_upload_data").click(function() {
-  
- if(flightGUID.length > 0){
+$("#id_upload_data").click(function () {
+  if (flightGUID.length > 0) {
+    $(".progress").show();
 
-   $(".progress").show();
-
-   $.getJSON(
-    `${window.location.origin}/api/uploadregcheck/${flightGUID}`,
-    function (data) {
-      if (data.response == "not_found") {
-        
-        let val =  "/api/uploadreg/";
-        uploadDataToMinio(val,"POST");
-
+    $.getJSON(
+      `${window.location.origin}/api/uploadregcheck/${flightGUID}`,
+      function (data) {
+        if (data.response == "not_found") {
+          let val = "/api/uploadreg/";
+          uploadDataToMinio(val, "POST");
+        }
+        if (data.response == "found") {
+          let val = `/api/uploadreg/${flightGUID}/`;
+          uploadDataToMinio(val, "PUT");
+        }
       }
-      if (data.response == "found") {
-       
-      let val =  `/api/uploadreg/${flightGUID}/`;
-        uploadDataToMinio(val,"PUT");
-      }
-    }
-  ).fail(function (xhr, status, error) {
-    console.log("Error: " + status + " - " + error);
-  });
+    ).fail(function (xhr, status, error) {
+      console.log("Error: " + status + " - " + error);
+    });
 
-const uploadDataToMinio = (valUrl,regType) => {
-  $.ajax({
-    xhr: function() {
-      var xhr = new XMLHttpRequest();
-      xhr.upload.onprogress = function(e) {
-        var percent = Math.round((e.loaded / e.total) * 100);
-        $(".progress-bar").width(percent + "%").text(percent + "%");
-      };
-      return xhr;
-    },
-    type: regType,
-    contentType: "application/json",
-    url:   valUrl ,
-    enctype: "multipart/form-data",
-    data: getupload_FormData(),
-    headers: {
-      "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
-        .value,
-    },
-    contentType: false,
-    processData: false,
-    success: function(data) {
-        
-     
-      $.confirm({
-        title: '<span class="text-success"><b>successful!</b></span>',
-        content:
-          '<span class="text-dark">Data has been uploded successfully</span>',
-        type: "green",
-        typeAnimated: true,
-        buttons: {
-          tryAgain: {
-            text: "Close",
-            btnClass: "btn-green",
-            action: function () {},
-          },
+    const uploadDataToMinio = (valUrl, regType) => {
+      $.ajax({
+        xhr: function () {
+          var xhr = new XMLHttpRequest();
+          xhr.upload.onprogress = function (e) {
+            var percent = Math.round((e.loaded / e.total) * 100);
+            $(".progress-bar")
+              .width(percent + "%")
+              .text(percent + "%");
+          };
+          return xhr;
+        },
+        type: regType,
+        contentType: "application/json",
+        url: valUrl,
+        enctype: "multipart/form-data",
+        data: getupload_FormData(),
+        headers: {
+          "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
+            .value,
+        },
+        contentType: false,
+        processData: false,
+        success: function (data) {
+          $.confirm({
+            title: '<span class="text-success"><b>successful!</b></span>',
+            content:
+              '<span class="text-dark">Data has been uploded successfully</span>',
+            type: "green",
+            typeAnimated: true,
+            buttons: {
+              tryAgain: {
+                text: "Close",
+                btnClass: "btn-green",
+                action: function () {},
+              },
+            },
+          });
+
+          onloadMissionListClick(flightGUID);
+
+          $(".progress").fadeOut();
+        },
+        error: function (error) {
+          console.log("Error:", error);
         },
       });
-
-
-
-
-
-        onloadMissionListClick(flightGUID);
-
-        $(".progress").fadeOut();
-    },
-    error: function(error) {
-        console.log("Error:", error);
-    }
+    };
+  }
 });
 
-}
-
-}
-
-});
-
-
-const del_upload_file = (dronePath) =>{
-
+const del_upload_file = (dronePath) => {
   $.ajax({
     url: `/api/uploadregdel/${flightGUID}/`,
     type: "DELETE",
     data: {
-        "field_to_delete": dronePath
+      field_to_delete: dronePath,
     },
     headers: {
-      "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0]
-        .value,
+      "X-CSRFToken": document.getElementsByName("csrfmiddlewaretoken")[0].value,
     },
-    success: function(data) {
-        console.log("Data has been successfully deleted:", data);
+    success: function (data) {
+      console.log("Data has been successfully deleted:", data);
     },
-    error: function(error) {
-        console.error("Error deleting data:", error);
-    }
-});
-}
+    error: function (error) {
+      console.error("Error deleting data:", error);
+    },
+  });
+};
 
-
-
-
-
-
-
-const getupload_FormData = ()  =>{
-
+const getupload_FormData = () => {
   let formData = new FormData();
-  formData.append('flight_mission_guid', flightGUID);
-  formData.append('mosaiced_image', $('#id_mosaiced_image')[0].files[0] != null? $('#id_mosaiced_image')[0].files[0] :"");
-  formData.append('row_image', $('#id_row_image')[0].files[0] != null? $('#id_row_image')[0].files[0] :"");
-  formData.append('ground_control_point', $('#id_ground_control_point')[0].files[0] != null? $('#id_ground_control_point')[0].files[0] :"");
-  formData.append('ground_truth_point', $('#id_ground_truth_point')[0].files[0] != null? $('#id_ground_truth_point')[0].files[0] :"");
-  formData.append('dronePath', $('#id_dronePath')[0].files[0] != null? $('#id_dronePath')[0].files[0] :"");
+  formData.append("flight_mission_guid", flightGUID);
+  formData.append(
+    "mosaiced_image",
+    $("#id_mosaiced_image")[0].files[0] != null
+      ? $("#id_mosaiced_image")[0].files[0]
+      : ""
+  );
+  formData.append(
+    "row_image",
+    $("#id_row_image")[0].files[0] != null ? $("#id_row_image")[0].files[0] : ""
+  );
+  formData.append(
+    "ground_control_point",
+    $("#id_ground_control_point")[0].files[0] != null
+      ? $("#id_ground_control_point")[0].files[0]
+      : ""
+  );
+  formData.append(
+    "ground_truth_point",
+    $("#id_ground_truth_point")[0].files[0] != null
+      ? $("#id_ground_truth_point")[0].files[0]
+      : ""
+  );
+  formData.append(
+    "dronePath",
+    $("#id_dronePath")[0].files[0] != null ? $("#id_dronePath")[0].files[0] : ""
+  );
 
   return formData;
-
-}
-
-
+};
 
 // update the upload step entries
 
-const updateDownloadStepEntries = () =>{
-
-
+const updateDownloadStepEntries = () => {
   $.getJSON(
     `${window.location.origin}/api/uploadregcheck/${flightGUID}`,
     function (data) {
@@ -877,9 +884,8 @@ const updateDownloadStepEntries = () =>{
         update_download_record_notFound();
       }
       if (data.response == "found") {
-        
         // reset data before update
-       // update_download_record_notFound();
+        // update_download_record_notFound();
 
         update_download_record_found(data);
       }
@@ -887,80 +893,57 @@ const updateDownloadStepEntries = () =>{
   ).fail(function (xhr, status, error) {
     console.log("Error: " + status + " - " + error);
   });
-
-
-}
+};
 
 //reset all the donwload filed
-const update_download_record_notFound = () =>{
-
-  $('#step-5 :input[type="file"]').each( (index,el)=> {
-
+const update_download_record_notFound = () => {
+  $('#step-5 :input[type="file"]').each((index, el) => {
     $(el).val(null);
-
   });
 
-  $('#step-5 .DownloadIcone' ).each( (index,el)=> {
-
-    $(el).attr("data-url",'');
-   
-
+  $("#step-5 .DownloadIcone").each((index, el) => {
+    $(el).attr("data-url", "");
   });
 
-
-  $('#step-5  .TrashIcone' ).each( (index,el)=> {
-
-    $(el).attr("model_field",'');
-
+  $("#step-5  .TrashIcone").each((index, el) => {
+    $(el).attr("model_field", "");
   });
 
-
-  $('#step-5  .custom-file-label' ).each( (index,el)=> {
-
-   // $(el).attr("for",'');
-    $(el).text('---');
-
+  $("#step-5  .custom-file-label").each((index, el) => {
+    // $(el).attr("for",'');
+    $(el).text("---");
   });
-
-
-}
-
-
-
+};
 
 //update form  download form  if entries found
-const update_download_record_found = (data) =>{
+const update_download_record_found = (data) => {
+  let da = Object.entries(data.data).map(([key, value]) => ({
+    ["id_" + key]: value,
+  }));
 
-    let da = Object.entries(data.data).map( ([key,value]) => ({ ["id_"+key]: value } ));
-
-
-  $("#step-5 label.custom-file-label ").each( (index,el)=> {
-    
+  $("#step-5 label.custom-file-label ").each((index, el) => {
     let valFor = $(el).attr("for");
-    let dakey = Object.keys(da.find(object => object.hasOwnProperty(valFor)))[0];
-    let daval= Object.values(da.find(object => object.hasOwnProperty(valFor)))[0];
+    let dakey = Object.keys(
+      da.find((object) => object.hasOwnProperty(valFor))
+    )[0];
+    let daval = Object.values(
+      da.find((object) => object.hasOwnProperty(valFor))
+    )[0];
 
-    if((daval != null) && (valFor  == dakey)){
-
-      $(el).text(daval.split("/").pop());
-      $(`#div_${valFor}`).parent("div").children("span").children(".DownloadIcone").attr("data-url",daval);
-      $(`#div_${valFor}`).parent("div").children("span").children(".TrashIcone").attr("model_field",valFor.split("id_").pop());
-
+    if (daval != null && valFor == dakey) {
+      $(el).text(daval.split("?")[0].split("dmc/")[1].split("/")[1]);
+      $(`#div_${valFor}`)
+        .parent("div")
+        .children("span")
+        .children(".DownloadIcone")
+        .attr("data-url", daval);
+      $(`#div_${valFor}`)
+        .parent("div")
+        .children("span")
+        .children(".TrashIcone")
+        .attr("model_field", valFor.split("id_").pop());
     }
-   
-   
 
-   /// to be started
-});
-
-
-  
-}
-
-
-
-
-
-
-
-
+    /// to be started
+  });
+};

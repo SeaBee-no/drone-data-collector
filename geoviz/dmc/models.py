@@ -218,7 +218,6 @@ class ddc_upload(models.Model):
                                            bucket_name='dmc',
                                        ),
                                        upload_to=iso_date_prefix, null=True, blank=True)
-     
     history = HistoricalRecords()
 
 

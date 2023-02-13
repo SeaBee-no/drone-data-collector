@@ -266,16 +266,48 @@ MINIO_EXTERNAL_ENDPOINT_USE_HTTPS = True  # Default is same as MINIO_USE_HTTPS
 MINIO_ACCESS_KEY = os.getenv('MINIO_ACCESS_KEY')
 MINIO_SECRET_KEY = os.getenv('MINIO_SECRET_KEY')
 MINIO_USE_HTTPS = True
-MINIO_URL_EXPIRY_HOURS = timedelta(days=1)  # Default is 7 days (longest) if not defined
+MINIO_URL_EXPIRY_HOURS = timedelta(days=5)  # Default is 7 days (longest) if not defined
 MINIO_CONSISTENCY_CHECK_ON_START = False
-# MINIO_PRIVATE_BUCKETS = [
-#     'django-backend-dev-private',
+MINIO_PRIVATE_BUCKETS = [
+
+     'dmc',
+ ]
+# MINIO_PUBLIC_BUCKETS = [
 #     'dmc',
 # ]
-MINIO_PUBLIC_BUCKETS = [
-    'dmc',
+
+
+# dummy_policy = {"Version": "2012-10-17",
+#                 "Statement": [
+#                     {
+#                         "Sid": "",
+#                         "Effect": "Allow",
+#                         "Principal": {"AWS": "*"},
+#                         "Action": "s3:GetBucketLocation",
+#                         "Resource": f"arn:aws:s3:::dmc"
+#                     },
+#                     {
+#                         "Sid": "",
+#                         "Effect": "Allow",
+#                         "Principal": {"AWS": "*"},
+#                         "Action": "s3:ListBucket",
+#                         "Resource": f"arn:aws:s3:::dmc"
+#                     },
+#                     {
+#                         "Sid": "",
+#                         "Effect": "Allow",
+#                         "Principal": {"AWS": "*"},
+#                         "Action": "s3:GetObject",
+#                         "Resource": f"arn:aws:s3:::dmc/*"
+#                     }
+#                 ]}
+
+
+MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = [
+
+#('dmc', dummy_policy),
+
 ]
-MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = []
 # MINIO_MEDIA_FILES_BUCKET = 'my-media-files-bucket'  # replacement for MEDIA_ROOT
 # MINIO_STATIC_FILES_BUCKET = 'my-static-files-bucket'  # replacement for STATIC_ROOT
 #MINIO_BUCKET_CHECK_ON_SAVE = True  # Default: True // Creates bucket if missing, then save
