@@ -216,6 +216,7 @@ class uploaddata_serializers(serializers.ModelSerializer):
     ground_control_point = serializers.FileField(required=False)
     ground_truth_point = serializers.FileField(required=False)
     dronePath = serializers.FileField(required=False)
+    other = serializers.FileField(required=False)
     
     
     class Meta:
@@ -298,7 +299,7 @@ class get_download_url(generics.GenericAPIView):
                         )
                 #found = minioClient.bucket_exists("dmc")
                 fileWithPath = fileWithPath.replace("£¤", "/")
-                file_url = minioClient.presigned_get_object("dmc", f"{fileWithPath}", expires=timedelta(hours=1))
+                file_url = minioClient.presigned_get_object("geoviz-upload-data", f"{fileWithPath}", expires=timedelta(hours=1))
 
                 return Response(file_url)
                 

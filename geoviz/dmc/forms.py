@@ -171,6 +171,7 @@ class ddcForm(forms.Form):
     ground_control_point = forms.FileField(required=False, label='Upload ground control point as .csv')
     ground_truth_point = forms.FileField(required=False, label='Upload ground truth point as .csv')
     dronePath = forms.FileField(required=False, label='Upload drone path file as .kml')
+    other = forms.FileField(required=False, label='Upload any supporting data such pdf, report, photo in a zip format etc')
         
 
     

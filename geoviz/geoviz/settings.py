@@ -271,7 +271,7 @@ MINIO_URL_EXPIRY_HOURS = timedelta(days=5)  # Default is 7 days (longest) if not
 MINIO_CONSISTENCY_CHECK_ON_START = False
 MINIO_PRIVATE_BUCKETS = [
 
-     'dmc',
+     'geoviz-upload-data',
  ]
 # MINIO_PUBLIC_BUCKETS = [
 #     'dmc',

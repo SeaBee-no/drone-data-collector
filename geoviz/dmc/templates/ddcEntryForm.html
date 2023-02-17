@@ -1,4 +1,4 @@
-{% extends "footer.html" %}
+{% extends "base_template/footer.html" %}
 {% load static %}
 {% load crispy_forms_tags %}
 {% load leaflet_tags %}
@@ -400,6 +400,16 @@ border-radius: 0px;
                                     <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
                                 </span>
                             </div>
+
+                            <div class="form-group col-md-8 mb-0">
+                                {{ form.other | as_crispy_field   }}
+                                <span>
+                                    <i class="fa fa-cloud-upload fa-xl UploadIcone text-info"></i>
+                                    <i class="fa fa-cloud-download fa-xl DownloadIcone text-success" data-url="" ></i>
+                                    <i class="fa fa-trash fa-xl TrashIcone text-danger" model_field=""></i>
+                                </span>
+                            </div>
+
 
 
                             <div class="form-group col-md-12 mb-0 mx-auto text-center pt-5">

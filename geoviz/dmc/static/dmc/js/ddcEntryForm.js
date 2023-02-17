@@ -27,6 +27,7 @@ let map_proLoca = null;
 let gp_layer_projArea = null;
 let gp_layer_proLoca = null;
 let flightGUID = "";
+let missionName ="";
 
 $(window).on("map:init", function (e) {
   //get the map refrence
@@ -272,7 +273,7 @@ document.addEventListener("DOMContentLoaded", function () {
     $("#smartwizard").smartWizard("loader", "show");
 
     flightGUID = $("#id_mision_name_list").find(":selected").val();
-
+    missionName= $("#id_mision_name_list").find(":selected").text();
     // tigger to update the dataupload form
     updateDownloadStepEntries();
 
@@ -590,7 +591,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // click on download
   $(".DownloadIcone").click((el) => {
     let val = $(el.currentTarget).attr("data-url");
-    val = val.split("?")[0].split("dmc/")[1].replace("/", "£¤");
+    val = val.split("?")[0].split("geoviz-upload-data/")[1].split('/').join('£¤');
 
     //val.length > 0 ? window.open(val):null;
 
@@ -649,7 +650,7 @@ document.addEventListener("DOMContentLoaded", function () {
       .find(".DownloadIcone")
       .first()
       .attr("data-url");
-    val = val.split("?")[0].split("dmc/")[1].replace("/", "£¤");
+    val = val.split("?")[0].split("geoviz-upload-data/")[1].split('/').join('£¤');
 
     $(".GeonodeIcone").toggleClass("fa-map");
     $(".GeonodeIcone").toggleClass("fa-sync fa-spin");
@@ -844,6 +845,7 @@ const del_upload_file = (dronePath) => {
 const getupload_FormData = () => {
   let formData = new FormData();
   formData.append("flight_mission_guid", flightGUID);
+  formData.append("flight_mission_name", missionName.split("----")[1].replace(/\s/g, "_"));
   formData.append(
     "mosaiced_image",
     $("#id_mosaiced_image")[0].files[0] != null
@@ -869,6 +871,11 @@ const getupload_FormData = () => {
   formData.append(
     "dronePath",
     $("#id_dronePath")[0].files[0] != null ? $("#id_dronePath")[0].files[0] : ""
+  );
+
+  formData.append(
+    "other",
+    $("#id_other")[0].files[0] != null ? $("#id_other")[0].files[0] : ""
   );
 
   return formData;
@@ -931,7 +938,7 @@ const update_download_record_found = (data) => {
     )[0];
 
     if (daval != null && valFor == dakey) {
-      $(el).text(daval.split("?")[0].split("dmc/")[1].split("/")[1]);
+      $(el).text(daval.split("?")[0].split("geoviz-upload-data/")[1].split("/").pop());
       $(`#div_${valFor}`)
         .parent("div")
         .children("span")
