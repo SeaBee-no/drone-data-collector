@@ -2,7 +2,7 @@ from django.forms import ModelForm
 # from django import forms
 from django.contrib.gis import forms
 
-from bootstrap_daterangepicker import widgets, fields
+#from bootstrap_daterangepicker import widgets, fields
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 
 from .models import *
@@ -23,8 +23,11 @@ from crispy_forms.helper import FormHelper
 from django.utils.safestring import mark_safe
 from crispy_forms.bootstrap import AppendedText, PrependedText, FormActions
 
+from django.contrib.sites.models import Site
 
+from django.conf import settings
 
+geonode_url = settings.GEONODE_DJANGO_URL
 
 # class dmcForm(ModelForm):
 #     datetime_range = fields.DateTimeRangeField(
@@ -178,7 +181,8 @@ class ddcForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(ddcForm, self).__init__(*args, **kwargs)
 
-        obj = requests.get(f'http://localhost:8000/api/dronproject/').json()
+        
+        obj = requests.get(f'{geonode_url}/api/dronproject/').json()
 
 
         self.fields['mision_name_list'].choices = [

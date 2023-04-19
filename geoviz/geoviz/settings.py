@@ -59,7 +59,7 @@ INSTALLED_APPS = [
      #'rest_framework.authtoken',
     'simple_history',
     'import_export',
-    'bootstrap_daterangepicker',
+    #'bootstrap_daterangepicker',
     "bootstrap_datepicker_plus",
     'django_minio_backend',
 
@@ -320,3 +320,5 @@ MINIO_POLICY_HOOKS: List[Tuple[str, dict]] = [
 #     ],
 # }
 
+#base local url
+GEONODE_DJANGO_URL = "http://localhost:8001"

@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}\\geoviz\\manage.py",
             "args": [
-                "runserver"
+                "runserver",
+                "8001"
             ],
             "django": true,
             "justMyCode": true

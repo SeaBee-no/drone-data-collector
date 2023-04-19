@@ -32,12 +32,33 @@ from django.contrib import messages
 from rest_framework import  generics
 
 from django.views.decorators.csrf import csrf_exempt
-from geo.Geoserver import Geoserver
+
 
 from minio import Minio
 from datetime import  timedelta
 import urllib
-jsonPath=Path.joinpath(conf_settings.BASE_DIR, 'dmc','tempfolder')
+
+from requests.auth import HTTPBasicAuth
+
+from django.conf import settings
+
+geonode_url = settings.GEONODE_DJANGO_URL
+
+
+
+jsonPath=""
+#inside geonode enviroment 
+jsonPath_test=Path.joinpath(conf_settings.BASE_DIR, 'geonode' ,'dmc','tempfolder')
+if jsonPath_test.exists():
+    jsonPath=Path.joinpath(conf_settings.BASE_DIR,'geonode','dmc','tempfolder')
+
+#outside geonode enviroment 
+jsonPath_test=Path.joinpath(conf_settings.BASE_DIR, 'dmc','tempfolder')
+if jsonPath_test.exists():
+    jsonPath=Path.joinpath(conf_settings.BASE_DIR,'dmc','tempfolder')
+
+
+
 
 
 class get_dronelogbook_flight_data_coustom_form (APIView):
@@ -57,9 +78,12 @@ class get_dronelogbook_flight_data_coustom_form (APIView):
             # with open(jsonPath / 'flightList.json','w+') as json_file:
             #     json.dump(obj.json()['data'], json_file)
 
+            #print("path to json >>>>>"+ str(jsonPath) ,flush=True)
+
             with open(jsonPath / 'flightList.json','r') as f:
                 obj = json.load(f)
             
+          
             #return Response(obj.json()['data'])
             return Response(obj)
 
@@ -91,16 +115,16 @@ class get_flight_mission (APIView):
 
 def get_data_dlb_byguid(opration, guid):
 
-        data = requests.get(f'https://api.dronelogbook.com/{opration}/{guid}', 
-            headers={"accept": "application/json",
-            "ApiKey": os.environ['dronelogbooka_pikey'],
-             "DlbUrl": os.environ['dronelogbook_dlburl'],
-            })
-        # data = requests.get(f'https://api.dronelogbook.com/flight/DAE11F89-9DD6-D581-95B8-A4FF1FF1638E', 
-        #     headers={
-        #     "ApiKey": 'ak_f596ec84-c0d9-ea1e-46ab-77332e8fa36ehh',
-        #     # "DlbUrl": 'www.dronelogbook.com',
+        # data = requests.get(f'https://api.dronelogbook.com/{opration}/{guid}', 
+        #     headers={"accept": "application/json",
+        #     "ApiKey": os.environ['dronelogbooka_pikey'],
+        #      "DlbUrl": os.environ['dronelogbook_dlburl'],
         #     })
+        data = requests.get(f'https://api.dronelogbook.com/{opration}/{guid}', 
+            headers={
+            "ApiKey": os.environ['DRONELOGBOOK_API_KEY'],
+            # "DlbUrl": 'www.dronelogbook.com',
+            })
 
         return data
 
@@ -108,8 +132,8 @@ def get_data_dlb_bypage(opration,page_num):
 
         data = requests.get(f'https://api.dronelogbook.com/{opration}?num_page={page_num}', 
             headers={"accept": "application/json",
-            "ApiKey": os.environ['dronelogbooka_pikey'],
-             "DlbUrl": os.environ['dronelogbook_dlburl'],
+            "ApiKey": os.environ['DRONELOGBOOK_API_KEY'],
+             #"DlbUrl": os.environ['dronelogbook_dlburl'],
             })
 
         return data
@@ -135,7 +159,7 @@ def ddc(request):
     context = {}
     form = ddcForm(request.POST or None)
     context['form'] = form
-    return render(request, 'ddcEntryForm.html',context)
+    return render(request, 'ddc/ddcEntryForm.html',context)
 
 
 
@@ -151,7 +175,7 @@ def ddc_list(request):
         objList= ddc_main.objects.filter(created_by__user__username=request.user).order_by('flight_mission_name')
 
     context['objList'] = objList
-    return render(request, 'ddcEntryList.html',context)
+    return render(request, 'ddc/ddcEntryList.html',context)
 
 
 
@@ -327,7 +351,7 @@ class publish_to_geonode(APIView):
 
             counter = 1
             while Path(jsonPath / file_name).exists():
-                file_name = f"{file_stem}_{counter}.{file_extension}"
+                file_name = f"{file_stem}_{counter}{file_extension}"
                 counter += 1
             
             file_path_with_name = jsonPath / file_name
@@ -336,40 +360,56 @@ class publish_to_geonode(APIView):
 
             
             print(f"The file has been saved to:{file_path_with_name}")
-            
-            geo = Geoserver( 'https://geonode.seabee.sigma2.no/geoserver',   username=os.getenv('geoserver_user'),   password=os.getenv('geosever_pass'))
-            geo.create_coveragestore(layer_name=file_stem, path=file_path_with_name, workspace='geonode')
+        #region
+            # geo = Geoserver( geoserver_url + '/geoserver',   username=os.getenv('geoserver_user'),   password=os.getenv('geoserver_pass'))
+            # geo.create_coveragestore(layer_name=file_stem, path=file_path_with_name, workspace='geonode')
 
             
             
-            credentials = f"{os.getenv('geondoe_user')}:{os.getenv('geonode_pass')}".encode('utf-8')
+            # credentials = f"{os.getenv('geondoe_user')}:{os.getenv('geonode_pass')}".encode('utf-8')
 
-            encoded_credentials = base64.b64encode(credentials).decode('utf-8')
+            # encoded_credentials = base64.b64encode(credentials).decode('utf-8')
 
-            geonode_upload_tigger = "https://geonode.seabee.sigma2.no/api/v2/management/commands/"
+            # geonode_upload_tigger = geonode_url +"/api/v2/management/commands/"
             
 
 
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": f"Basic {encoded_credentials}"     
-                            }
-            # Define command and parameters
-            command = "updatelayers"
-            kwargs = {
-            'filter': file_stem,
-            'store': file_stem,
-            'workspace':'geonode'
-            }
+            # headers = {
+            #     "Content-Type": "application/json",
+            #     "Authorization": f"Basic {encoded_credentials}"     
+            #                 }
+            # # Define command and parameters
+            # command = "updatelayers"
+            # kwargs = {
+            # 'filter': file_stem,
+            # 'store': file_stem,
+            # 'workspace':'geonode'
+            # }
 
-            response = requests.post(geonode_upload_tigger, headers=headers, data=json.dumps({"command": command, "kwargs": kwargs}))
+            # response = requests.post(geonode_upload_tigger, headers=headers, data=json.dumps({"command": command, "kwargs": kwargs}))
             
-            job_id= response.json()['data']['id']
+            # job_id= response.json()['data']['id']
 
-            #delete the temp file once uploded
+            # #delete the temp file once uploded
+            # file_path_with_name.unlink()
+        #endregion
+            
+            client = requests.session()
+            
+            with open(file_path_with_name, "rb") as f:
+                files_obj = [("base_file", (file_name, f,),),]
+                redis = client.post("http://localhost:8000"+"/api/v2/uploads/upload/",
+                        auth=HTTPBasicAuth(os.getenv('GEONODE_USER_ID'), os.getenv('GEONODE_PASSWORD')),
+                        files=files_obj,
+                       )
+                
+            print(os.getenv('geonode_pass'),flush=True)
+
+            ##delete the temp file once uploded
             file_path_with_name.unlink()
+           
 
-            return Response({'jobid':job_id})
+            return Response({'status': redis.status_code })
 
 
         except Exception as e:
@@ -384,7 +424,7 @@ class check_active_geonode_job(APIView):
 
                 encoded_credentials = base64.b64encode(credentials).decode('utf-8')
 
-                geonode_upload_tigger = f"https://geonode.seabee.sigma2.no/api/v2/management/jobs/{jobid}/status/"
+                geonode_upload_tigger = geonode_url +f"/api/v2/management/jobs/{jobid}/status/"
                 
                 headers = {
                     "Content-Type": "application/json",

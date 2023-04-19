@@ -5,7 +5,8 @@ from django.contrib.contenttypes.models import ContentType
 from django_minio_backend import MinioBackend, iso_date_prefix
 import datetime
 from django.contrib.postgres.fields import DateTimeRangeField
-from home.models import *
+from django.db import models
+from simple_history.models import HistoricalRecords
 from django.contrib.gis.db.models.fields import MultiPointField
 from django.conf import settings
 User = settings.AUTH_USER_MODEL
