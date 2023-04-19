@@ -37,12 +37,12 @@ from django.views.decorators.csrf import csrf_exempt
 from minio import Minio
 from datetime import  timedelta
 import urllib
-
 from requests.auth import HTTPBasicAuth
 
 from django.conf import settings
 
 geonode_url = settings.GEONODE_DJANGO_URL
+
 
 
 
@@ -61,23 +61,11 @@ if jsonPath_test.exists():
 
 
 
+
 class get_dronelogbook_flight_data_coustom_form (APIView):
     def get(self, request, format=None):
         try:
             
-            # url = f'https://andoyaspace.dronelogbook.com/webservices/customReportAPI.php'
-          
-            # headers = {"accept": "application/json"}
-            # data = {
-            #     "apikey": os.environ['dronelogbooka_pikey'],
-            #     "template": os.environ['dronelogbook_flight_template'],
-            #     "page": "0",
-            # }
-            # obj= requests.post(url=url, data=data, headers= headers)
-
-            # with open(jsonPath / 'flightList.json','w+') as json_file:
-            #     json.dump(obj.json()['data'], json_file)
-
             #print("path to json >>>>>"+ str(jsonPath) ,flush=True)
 
             with open(jsonPath / 'flightList.json','r') as f:
@@ -115,11 +103,8 @@ class get_flight_mission (APIView):
 
 def get_data_dlb_byguid(opration, guid):
 
-        # data = requests.get(f'https://api.dronelogbook.com/{opration}/{guid}', 
-        #     headers={"accept": "application/json",
-        #     "ApiKey": os.environ['dronelogbooka_pikey'],
-        #      "DlbUrl": os.environ['dronelogbook_dlburl'],
-        #     })
+        # if opration == "place":
+        #     print(opration)
         data = requests.get(f'https://api.dronelogbook.com/{opration}/{guid}', 
             headers={
             "ApiKey": os.environ['DRONELOGBOOK_API_KEY'],
@@ -398,7 +383,7 @@ class publish_to_geonode(APIView):
             
             with open(file_path_with_name, "rb") as f:
                 files_obj = [("base_file", (file_name, f,),),]
-                redis = client.post("http://localhost:8000"+"/api/v2/uploads/upload/",
+                redis = client.post(geonode_url+"/api/v2/uploads/upload/",
                         auth=HTTPBasicAuth(os.getenv('GEONODE_USER_ID'), os.getenv('GEONODE_PASSWORD')),
                         files=files_obj,
                        )

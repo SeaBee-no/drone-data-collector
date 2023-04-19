@@ -9,6 +9,9 @@ media
 # Backup files # 
 *.bak 
 
+#avoide tiff file
+*.tif
+
 # If you are using PyCharm # 
 # User-specific stuff
 .idea/**/workspace.xml

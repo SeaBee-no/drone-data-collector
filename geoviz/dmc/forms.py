@@ -186,7 +186,10 @@ class ddcForm(forms.Form):
 
 
         self.fields['mision_name_list'].choices = [
-            (val['Identifier'], val['Flight Name'] + "----" + val['Location']) for val in obj]
+            
+            (val['guid'], val['name'] + "----" + val['place_name']) for val in obj
+            
+            ]
         
      
 

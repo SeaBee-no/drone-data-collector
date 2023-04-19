@@ -387,11 +387,14 @@ document.addEventListener("DOMContentLoaded", function () {
             $("#id_air_temperature").val(flight.weather_detail.T);
             $("#id_wind_speed").val(flight.weather_detail.W.split("(")[0]);
             $("#id_wind_direction").val(
-              flight.weather_detail.W.split("(")[1].slice(0, -1)
-            );
+              
+              flight.weather_detail.W.length > 0 ? flight.weather_detail.W.split("(")[1].slice(0, -1) :''
+            
+            
+              );
             $("#id_sun_time").val(flight.sun_time);
 
-            flight.data_plan_area.forEach((element) => {
+            flight.data_plan_area &&  flight.data_plan_area.forEach((element) => {
               let validJson = true;
               element.geometry.forEach(function (c) {
                 if (
@@ -428,6 +431,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 gp_layer_projArea.addLayer(el);
               }
             });
+
+
+
             //###########################
             let tasks_equipment = [];
             flight.equipments.forEach((el) => {
@@ -516,24 +522,45 @@ document.addEventListener("DOMContentLoaded", function () {
                 // Flight level data
                 let place = returndata_place;
 
+                if(place != 'NA'){
                 gp_layer_proLoca.addLayer(
                   new L.marker([place.latitude, place.longitude], {
                     icon: droneIcone,
                   })
                 );
-                // L.circleMarker([50.5, 30.5]  ).addTo(map);
+              } else
+              {
+
+                $.confirm({
+                  title: '<span class="text-success"><b>Not Found!</b></span>',
+                  content:
+                    '<span class="text-dark">GPS reading for the current location not found </span>',
+                  type: "orange",
+                  typeAnimated: true,
+                  buttons: {
+                    tryAgain: {
+                      text: "Close",
+                      btnClass: "btn-orange",
+                      action: function () {},
+                    },
+                  },
+                });
+              }
+
 
                 sleep(2000).then(() => {
                   $("#smartwizard").smartWizard("loader", "hide");
+                  
+                  if(place != 'NA'){
                   map_proLoca.fitBounds(gp_layer_proLoca.getBounds());
                   map_proLoca.zoomOut(18);
-
+                  }
                   sleep(5000).then(() => {
                     map_projArea.fitBounds(gp_layer_projArea.getBounds());
-                    //map_projArea.zoomIn(1);
+                  
                   });
                 });
-                //new L.marker([50.5, 30.5])
+               
                 //********************** /
               }
             );
@@ -547,12 +574,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // update the form value
   const get_flightdataByGUID = (flight, guid, callback) => {
+   
+   
     $.getJSON(
       `${window.location.origin}/api/flight/${flight}/${guid}`,
       function (data) {
-        callback(data[0]);
+
+        // if (flight == "flight"){
+        //   console.log(flight);
+        //  }
+        callback(data === 'NA' ? data:data[0] );
+      
+      
       }
     );
+ 
+ 
   };
 
   //initialize the leaflet form contro
@@ -572,7 +609,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // code block to be executed only once
         if (!executedmapZoomForm2) {
           map_projArea.fitBounds(gp_layer_projArea.getBounds());
-          console.log("I am in");
+         // console.log("I am in");
           executedmapZoomForm2 = true;
         }
       }
